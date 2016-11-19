@@ -21,8 +21,7 @@ shinyServer(function(input, output, session) {
       rv$trimmed.data <- trimData(rv$data, uniform = TRUE)
       interp.data <- scaleData(x = rv$trimmed.data@time,
                                         y = rv$trimmed.data@wavenumber, 
-                                        z = rv$trimmed.data@data,
-                                        ny = 500)
+                                        z = rv$trimmed.data@data)
       rv$trimmed.data@data <- interp.data$z * 1E3
       rv$trimmed.data@wavenumber <- interp.data$y
       rv$trimmed.data@time <- interp.data$x
