@@ -1,0 +1,13 @@
+exportPattern("^[[:alpha:]]+")
+exportMethods(
+    "as.data.frame",
+    "dft",
+    "imshow",
+    "lomb",
+    "wavelet" 
+)
+exportClasses(
+    "WaveletResult",
+     "FrequencyResult",
+     "SpecData" 
+)
