@@ -6,7 +6,7 @@
 #
 
 library(shiny)
-source("src.R")
+source("../R/src.R")
 
 shinyServer(function(input, output, session) {
   rv <- reactiveValues()
