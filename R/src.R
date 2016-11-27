@@ -200,6 +200,19 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
   return(spec.data)
 }
 
+
+#' Title
+#'
+#' @param object 
+#' @param remove.negative 
+#' @param uniform 
+#' @param start.time 
+#' @param end.time 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 trimData <- function(object, remove.negative = TRUE, 
                      uniform = FALSE, 
                      start.time = NA, 

@@ -1,0 +1,6 @@
+
+
+# ignore data files for R
+.RData
+.Rhistory
+.Rproj.user
