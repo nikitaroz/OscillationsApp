@@ -70,7 +70,7 @@ setGeneric("imshow", function(x = seq(0, 1, length.out = nrow(z)),
 )
 
 setMethod("wavelet", signature("SpecData"),
-          function(object, noctave = 2, nvoice = 8, fc = 1, ...){
+          function(object, noctave = 8, nvoice = 8, fc = 1, ...){
             if(!object@is.uniform) {
               stop("data needs to be uniform")
             }
