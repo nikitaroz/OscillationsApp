@@ -1,11 +1,16 @@
 Package: OscillationsApp
 Type: Package
-Title: What the package does (short line)
+Title: discovering oscillations in ultrafast, time-resolved spectra
 Version: 1.0
 Date: 2016-11-26
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Author: Nikita Rozanov, Miles Taylor
+Maintainer: rozanovn@oregonstate.edu
+Description: This package contains functions, S4 classes, and a Shiny
+app for characterizing oscillations in ultrafast, time resolved 
+spectra. It currently includes functions to trim data, resample,
+estimate power spectral density, calculate the continuous wavelet
+transform, and visualualize spectroscopy data. Additionally, a Shiny
+app provides a GUI to simplify the workflow.
 License: What license is it under?
 Depends:
     methods
