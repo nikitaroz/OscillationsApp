@@ -6,12 +6,6 @@ library(fields)
 library(doMC)
 registerDoMC(cores=4)
 
-# functions: 
-# for NOW only implement trimmed data functions
-# fft (trimmed)
-# lomb (trimmed)
-# wavelet 
-
 
 #' Title
 #'
@@ -182,9 +176,6 @@ trimData <- function(object, remove.negative = TRUE,
 }
 
 
-
-
-
 #' Title
 #'
 #' @param x 
@@ -209,6 +200,7 @@ scaleData <- function(x, y, z, nx = nrow(z), ny = ncol(z)){
   interp.grid$z <- as.matrix(interp.grid$z, nrow = nx, ncol = ny)
   return(interp.grid)
 }
+
 
 setMethod("imshow", signature(z = "matrix"),
           function(x = seq(0, 1, length.out = nrow(z)), 
