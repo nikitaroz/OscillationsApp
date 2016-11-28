@@ -13,6 +13,6 @@ Description:
   transform, and visualualize spectroscopy data. Additionally, a 
   Shiny app provides a GUI to simplify the workflow.
 License: What license is it under?
-Depends:
-    methods
+Imports: 
+  methods, plotly, lomb, signal, Rwave, fields, doMC
 RoxygenNote: 5.0.1
