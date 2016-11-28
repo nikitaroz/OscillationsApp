@@ -11,12 +11,12 @@
 #' @export
 #'
 #' @examples
-setGeneric("wavelet", function(object, noctave = 2, nvoice = 8, fc = 1, ...) 
+setGeneric("wavelet", function(object, noctave = 8, nvoice = 8, fc = 1, ...) 
   standardGeneric("wavelet")
 )
 
 setMethod("wavelet", signature("SpecData"), 
-          function(object, noctave = 2, nvoice = 8, fc = 1, ...) {
+          function(object, noctave = 8, nvoice = 8, fc = 1, ...) {
             if (!object@is.uniform) {
               stop("data needs to be uniform")
             }
