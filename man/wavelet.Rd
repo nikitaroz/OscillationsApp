@@ -4,7 +4,7 @@
 \alias{wavelet}
 \title{Title}
 \usage{
-wavelet(object, noctave = 2, nvoice = 8, fc = 1, ...)
+wavelet(object, noctave = 8, nvoice = 8, fc = 1, ...)
 }
 \arguments{
 \item{object}{}

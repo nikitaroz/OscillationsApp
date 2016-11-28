@@ -23,7 +23,7 @@ setGeneric("imshow", function(x = seq(0, 1, length.out = nrow(z)),
   standardGeneric("imshow")
 )
 
-
+# TODO: change this to plot function, reimplement for different S4 classes
 setMethod("imshow", signature(z = "matrix"), 
           function(x = seq(0, 1, length.out = nrow(z)), 
                    y = seq(0, 1, length.out = ncol(z)), 

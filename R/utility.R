@@ -1,3 +1,6 @@
+#' @importFrom fields interp.surface.grid
+NULL
+
 #' Title
 #'
 #' @param object 
@@ -70,6 +73,10 @@ trimData <- function(object,
 #' @export
 #'
 #' @examples
+
+
+# TODO: bad API, interpolation requires additional package
+# TODO: reimplement for each class
 scaleData <- function(x, y, z, nx = nrow(z), ny = ncol(z)) {
   if (nx == nrow(z) & ny == ncol(z)) {
     return(list(x = x, y = y, z = z))

@@ -1,3 +1,7 @@
+#' @importFrom methods new
+#' @importFrom utils read.table
+NULL
+
 
 #' Title
 #'

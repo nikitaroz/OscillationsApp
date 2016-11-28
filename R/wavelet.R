@@ -1,3 +1,6 @@
+#' @importFrom methods new
+#' @importFrom Rwave cwt
+NULL
 
 #' Title
 #'
@@ -36,6 +39,8 @@ setMethod("wavelet", signature("SpecData"),
             result@wavenumber <- object@wavenumber
             result@frequency <- rev(frequency)
             result@data <- array(dim = c(ntime, length(result@frequency), nwavenumber))
+            # TODO: this for loop takes up a bunch of time, also needs to be
+            # parallelized
             for (i in 1:nwavenumber) {
               coefs <- cwt(data[, i], noctave = noctave, nvoice = nvoice, w0 = w0, 
                            plot = FALSE)
