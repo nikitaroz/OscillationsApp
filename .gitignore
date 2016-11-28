@@ -1,4 +1,3 @@
-man/
 
 # ignore data files for R
 .RData
