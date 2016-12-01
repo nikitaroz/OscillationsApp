@@ -25,10 +25,11 @@ shinyServer(function(input, output, session) {
                                         y = rv$trimmed.data@wavenumber, 
                                         z = rv$trimmed.data@data,
                                         ny = 500)
-      rv$trimmed.data@data <- interp.data$z * 1E3
+      rv$trimmed.data@data <- interp.data$z
       rv$trimmed.data@wavenumber <- interp.data$y
       rv$trimmed.data@time <- interp.data$x
       rv$dft <- dft(rv$trimmed.data)
+      
       rv$wavelet <- wavelet(rv$trimmed.data)
       updateSliderInput(session, inputId = "data.select", 
                         value = round(rv$trimmed.data@wavenumber[1]),
@@ -69,7 +70,7 @@ shinyServer(function(input, output, session) {
     if(is.null(rv$wavelet)) {
       return(NULL)
     }
-    rv$wavelet.idx = which.min(abs(rv$data@wavenumber - input$data.select))
+    rv$wavelet.idx = which.min(abs(rv$trimmed.data@wavenumber - input$data.select))
     data <- t(rv$wavelet@data[, , rv$wavelet.idx])
     imshow(rv$wavelet@time, rv$wavelet@frequency, data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
