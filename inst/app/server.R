@@ -1,11 +1,13 @@
 
+# TODO: fix this, bad, causes side effects
+#library(shiny)
+library(plotly)
+
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
 #
 # http://shiny.rstudio.com
 #
-
-library(shiny)
 
 
 shinyServer(function(input, output, session) {
@@ -37,7 +39,7 @@ shinyServer(function(input, output, session) {
   })
 
   
-  output$data.plot <- renderPlotly({
+  output$data.plot <- plotly::renderPlotly({
     if(is.null(rv$trimmed.data)) {
       return(NULL)
     }
@@ -49,21 +51,21 @@ shinyServer(function(input, output, session) {
     imshow(rv$trimmed.data@wavenumber, rv$trimmed.data@time, rv$trimmed.data@data, 
            type = rv$plot.type, interactive = TRUE, showscale = FALSE)
   })
-  output$fft.intensity <- renderPlotly({
+  output$fft.intensity <- plotly::renderPlotly({
     if(is.null(rv$dft)) {
       return(NULL)
     }
     imshow(rv$dft@wavenumber, rv$dft@frequency, rv$dft@data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
   })
-  output$fft.phase <- renderPlotly({
+  output$fft.phase <- plotly::renderPlotly({
     if(is.null(rv$dft)) {
       return(NULL)
     }
     imshow(rv$dft@wavenumber, rv$dft@frequency, rv$dft@data, 
          type = rv$plot.type, interactive = TRUE, component = "phase")
   })
-  output$wavelet.intensity <- renderPlotly({
+  output$wavelet.intensity <- plotly::renderPlotly({
     if(is.null(rv$wavelet)) {
       return(NULL)
     }
@@ -72,7 +74,7 @@ shinyServer(function(input, output, session) {
     imshow(rv$wavelet@time, rv$wavelet@frequency, data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
   })
-  output$wavelet.phase <- renderPlotly({
+  output$wavelet.phase <- plotly::renderPlotly({
     if(is.null(rv$wavelet)){
       return(NULL)
     }

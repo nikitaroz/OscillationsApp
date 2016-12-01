@@ -1,3 +1,5 @@
+#' @importFrom plotly plot_ly
+NULL
 
 # TOOD: This is a terrible API (change to plot?)
 #' Title
