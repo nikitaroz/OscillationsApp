@@ -1,4 +1,5 @@
-
+#' @import hyperSpec
+NULL
 
 # SpecData should only contain one instance of data methods to extract
 # data will return new instances of the data that can trimmed, etc.
@@ -19,11 +20,10 @@
 #'
 #' @examples
 setClass("SpecData", 
-  representation(
-    data = "array", 
-    time = "vector", 
-    wavenumber = "vector", 
-    is.uniform = "logical"
+  contains = "hyperSpec",
+  representation = representation(
+    is.uniform = "logical",
+    type = "character"
   )
 )
 

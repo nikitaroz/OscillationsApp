@@ -15,32 +15,42 @@ NULL
 #' @examples
 loadData <- function(file = file.choose(), sep = ",", ...) {
   data <- read.table(file, sep = ",", ...)
-  spec.data <- new("SpecData")
-  spec.data@time <- data[-1, 1]
-  spec.data@wavenumber <- as.vector(t(data[1, -1]))
-  spec.data@data <- as.matrix(data)[-1, -1]
-  spec.data@is.uniform <- FALSE
-  if (!is.unsorted(spec.data@wavenumber)) {
+  time <- as.numeric(data[-1, 1])
+  wavelength <- as.vector(t(data[1, -1]))
+  data <- as.matrix(data)[-1, -1]
+  
+  if (!is.unsorted(wavelength)) {
     
-  } else if (!is.unsorted(rev(spec.data@wavenumber))) {
-    spec.data@wavenumber <- rev(spec.data@wavenumber)
-    spec.data@data <- t(apply(spec.data@data, 1, rev))
+  } else if (!is.unsorted(rev(wavelength))) {
+    wavelength <- rev(wavelength)
+    data <- t(apply(data, 1, rev))
   } else {
     stop("Dataset wavelengths are not ordered")
   }
-  bad.wavenumbers <- vector()
-  sapply(seq(from = 1, to = length(spec.data@wavenumber), by = 1), 
+  bad.wavelengths <- vector()
+  sapply(seq(from = 1, to = length(wavelength), by = 1), 
          function(i) {
-           if (all(spec.data@data[, i] == 0)) {
-             bad.wavenumbers <<- c(bad.wavenumbers, -i)
+           if (all(data[, i] == 0)) {
+             bad.wavelengths <<- c(bad.wavelengths, -i)
            }
          }
   )
   
-  if (length(bad.wavenumbers) != 0) {
-    spec.data@wavenumber <- spec.data@wavenumber[bad.wavenumbers]
-    spec.data@data <- spec.data@data[, bad.wavenumbers]
+  if (length(bad.wavelengths) != 0) {
+    wavelength <- wavelength[bad.wavelengths]
+    data <- data[, bad.wavelengths]
   }
-  colnames(spec.data@data) <- NULL
+  d = data.frame(
+    x = rep(wavelength, times = length(time)),
+    y = rep(time, each = length(wavelength))
+  )
+  dimnames(data) <- list(x = time, y = wavelength)
+  spec.data <- new ("hyperSpec", 
+    data = data.frame(
+      x = time
+    ),
+    spc = data,
+    wavelength = wavelength
+  )
   return(spec.data)
 }

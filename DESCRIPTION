@@ -14,5 +14,5 @@ Description:
   Shiny app provides a GUI to simplify the workflow.
 License: What license is it under?
 Imports: 
-  methods, utils, plotly, lomb, signal, Rwave, fields, doMC
+  methods, utils, plotly, lomb, signal, Rwave, fields, doMC, hyperSpec
 RoxygenNote: 5.0.1
