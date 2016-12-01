@@ -1,4 +1,5 @@
-
+#' @importFrom stats fft
+NULL
 
 #' Title
 #'

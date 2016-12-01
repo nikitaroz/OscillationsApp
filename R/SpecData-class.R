@@ -5,6 +5,7 @@
 # trimmed should be a parameter, that will be accessed by the function
 # that calls the object, instead of passed as a kwarg
 
+# callNextMethod
 
 #' Title
 #'

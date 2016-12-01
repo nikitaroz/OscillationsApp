@@ -1,3 +1,5 @@
+#' @importFrom plotly plot_ly
+NULL
 
 # TOOD: This is a terrible API (change to plot?)
 #' Title
@@ -40,7 +42,7 @@ setMethod("imshow", signature(z = "matrix"),
             if (type == "contour" & !interactive) {
               return(
                 filled.contour(x = x, y = y, z = z, 
-                               color.palette = colorRamps::matlab.like, 
+                                
                                ...)
               )
             } else if (type == "contour" & interactive) {
@@ -48,13 +50,13 @@ setMethod("imshow", signature(z = "matrix"),
                 plot_ly(x = x, y = y, z = z, 
                         type = "contour", 
                         line = list(width = 0), 
-                        colors = colorRamps::matlab.like(8), ...)
+                        ...)
               )
             } else if (type == "surface" & interactive) {
               return(
                 plot_ly(x = x, y = y, z = z, 
                         type = "surface", 
-                        colors = colorRamps::matlab.like(8), ...)
+                         ...)
               )
             }
           }

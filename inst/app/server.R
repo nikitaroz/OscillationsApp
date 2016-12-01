@@ -1,11 +1,13 @@
 
+# TODO: fix this, bad, causes side effects
+#library(shiny)
+library(plotly)
+
 # This is the server logic for a Shiny web application.
 # You can find out more about building applications with Shiny here:
 #
 # http://shiny.rstudio.com
 #
-
-library(shiny)
 
 
 shinyServer(function(input, output, session) {
@@ -23,10 +25,11 @@ shinyServer(function(input, output, session) {
                                         y = rv$trimmed.data@wavenumber, 
                                         z = rv$trimmed.data@data,
                                         ny = 500)
-      rv$trimmed.data@data <- interp.data$z * 1E3
+      rv$trimmed.data@data <- interp.data$z
       rv$trimmed.data@wavenumber <- interp.data$y
       rv$trimmed.data@time <- interp.data$x
       rv$dft <- dft(rv$trimmed.data)
+      
       rv$wavelet <- wavelet(rv$trimmed.data)
       updateSliderInput(session, inputId = "data.select", 
                         value = round(rv$trimmed.data@wavenumber[1]),
@@ -37,7 +40,7 @@ shinyServer(function(input, output, session) {
   })
 
   
-  output$data.plot <- renderPlotly({
+  output$data.plot <- plotly::renderPlotly({
     if(is.null(rv$trimmed.data)) {
       return(NULL)
     }
@@ -49,30 +52,30 @@ shinyServer(function(input, output, session) {
     imshow(rv$trimmed.data@wavenumber, rv$trimmed.data@time, rv$trimmed.data@data, 
            type = rv$plot.type, interactive = TRUE, showscale = FALSE)
   })
-  output$fft.intensity <- renderPlotly({
+  output$fft.intensity <- plotly::renderPlotly({
     if(is.null(rv$dft)) {
       return(NULL)
     }
     imshow(rv$dft@wavenumber, rv$dft@frequency, rv$dft@data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
   })
-  output$fft.phase <- renderPlotly({
+  output$fft.phase <- plotly::renderPlotly({
     if(is.null(rv$dft)) {
       return(NULL)
     }
     imshow(rv$dft@wavenumber, rv$dft@frequency, rv$dft@data, 
          type = rv$plot.type, interactive = TRUE, component = "phase")
   })
-  output$wavelet.intensity <- renderPlotly({
+  output$wavelet.intensity <- plotly::renderPlotly({
     if(is.null(rv$wavelet)) {
       return(NULL)
     }
-    rv$wavelet.idx = which.min(abs(rv$data@wavenumber - input$data.select))
+    rv$wavelet.idx = which.min(abs(rv$trimmed.data@wavenumber - input$data.select))
     data <- t(rv$wavelet@data[, , rv$wavelet.idx])
     imshow(rv$wavelet@time, rv$wavelet@frequency, data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
   })
-  output$wavelet.phase <- renderPlotly({
+  output$wavelet.phase <- plotly::renderPlotly({
     if(is.null(rv$wavelet)){
       return(NULL)
     }
