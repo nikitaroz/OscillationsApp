@@ -1,6 +1,8 @@
 
-# TODO: fix this, bad, causes side effects
-#library(shiny)
+
+library(shiny)
+library(ggplot2)
+library(gridExtra)
 library(plotly)
 
 # This is the server logic for a Shiny web application.
