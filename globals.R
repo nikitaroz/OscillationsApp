@@ -1,4 +1,5 @@
 library(hyperSpec)
+library(fields)
 
 setClass("Spectra", 
   contains = "hyperSpec"
@@ -48,7 +49,7 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
 
 trimData <- function(object, 
                      remove.negative = TRUE, 
-                     uniform = FALSE, 
+                     uniform = TRUE, 
                      start.time = NA, 
                      end.time = NA) {
   
@@ -56,24 +57,24 @@ trimData <- function(object,
   if (is.na(start.time)) {
     # if remove.negative is set
     if (remove.negative) {
-      start.time <- head(object@time[object@time >= 0], n = 1)
+      start.time <- head(object@data$x[object@data$x >= 0], n = 1)
     } else {
-      start.time <- head(object@time, n = 1)
+      start.time <- head(object@data$x, n = 1)
     }
   }
   # NA value for end.time
   if (is.na(end.time)) {
-    end.time <- tail(object@time, n = 1)
+    end.time <- tail(object@data$x, n = 1)
   }
   # times to indicies
-  start.idx <- which.min(abs(object@time - start.time))
-  end.idx <- which.min(abs(object@time - end.time))
+  start.idx <- which.min(abs(object@data$x - start.time))
+  end.idx <- which.min(abs(object@data$x - end.time))
   # if the data is supposed to be uniform
   if (uniform) {
-    delta <- abs(object@time[start.idx + 1] - object@time[start.idx])
+    delta <- abs(object@data$x[start.idx + 1] - object@data$x[start.idx])
     
     for (i in (start.idx + 1):end.idx) {
-      difference <- abs(object@time[i - 1] - object@time[i])
+      difference <- abs(object@data$x[i - 1] - object@data$x[i])
       if (abs(difference - delta) > 1e-05) {
         end.idx <- i - 1
         (break)()
@@ -81,14 +82,32 @@ trimData <- function(object,
     }
   }
   
-  trimmed <- new("Spectra")
-  trimmed@time <- object@time[start.idx:end.idx]
-  trimmed@wavenumber <- object@wavenumber
-  trimmed@data <- object@data[start.idx:end.idx, ]
-  if (uniform) {
-    trimmed@is.uniform <- TRUE
-  } else {
-    trimmed@is.uniform <- FALSE
-  }
+  trimmed <- new ("Spectra", 
+                    data = data.frame(
+                      x = object@data$x[start.idx:end.idx]
+                    ),
+                    spc = object[start.idx:end.idx, ],
+                    wavelength = object@wavelength
+  )
   return(trimmed)
 }
+
+scaleData <- function(object, nx = length(object@wavelength), 
+                      ny = length(object@data$x)) {
+  
+  data <- list(x = object@wavelength, y = object@data$x, z = t(object@data$spc))
+  x.interp <- seq(from = min(data$x), to = max(data$x), length.out = nx)
+  y.interp <- seq(from = min(data$y), to = max(data$y), length.out = ny)
+  interp.list <- list(x = x.interp, y = y.interp)
+  interp.grid <- interp.surface.grid(data, interp.list)
+  interp <- new ("Spectra", 
+                    data = data.frame(
+                      x = y.interp
+                    ),
+                    spc = t(interp.grid$z),
+                    wavelength = x.interp
+  )
+  return(interp)
+}
+
+

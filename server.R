@@ -2,7 +2,7 @@
 
 library(shiny)
 library(ggplot2)
-library(gridExtra)
+
 library(plotly)
 
 # This is the server logic for a Shiny web application.
@@ -22,14 +22,9 @@ shinyServer(function(input, output, session) {
       rv$wavelet <- NULL
     } else {
       rv$data <- loadData(file = input$file$datapath)
-      rv$trimmed.data <- trimData(rv$data, uniform = TRUE)
-      interp.data <- scaleData(x = rv$trimmed.data@time,
-                                        y = rv$trimmed.data@wavenumber, 
-                                        z = rv$trimmed.data@data,
-                                        ny = 500)
-      rv$trimmed.data@data <- interp.data$z
-      rv$trimmed.data@wavenumber <- interp.data$y
-      rv$trimmed.data@time <- interp.data$x
+      rv$processed.data <- scaleData(trimData(rv$data), nx = 500)
+      rv
+      if(FALSE){
       rv$dft <- dft(rv$trimmed.data)
       
       rv$wavelet <- wavelet(rv$trimmed.data)
@@ -38,22 +33,24 @@ shinyServer(function(input, output, session) {
                         min = round(rv$trimmed.data@wavenumber[1]),
                         max = round(tail(rv$trimmed.data@wavenumber, n = 1)),
                         step = 1)
+      }
     }
   })
 
   
-  output$data.plot <- plotly::renderPlotly({
-    if(is.null(rv$trimmed.data)) {
+  output$data.plot <- renderPlotly({
+    if(is.null(rv$processed.data)) {
       return(NULL)
     }
-    if(input$is.surface) {
-      rv$plot.type <- "surface"
-    } else {
-      rv$plot.type <- "contour"
-    }
-    imshow(rv$trimmed.data@wavenumber, rv$trimmed.data@time, rv$trimmed.data@data, 
-           type = rv$plot.type, interactive = TRUE, showscale = FALSE)
+    g <- ggplot(as.long.df(rv$processed.data), aes(x = .wavelength, y = x)) + 
+      geom_raster(aes(fill = spc), interpolate = TRUE, show.legend = FALSE) +
+      scale_fill_distiller(palette = "RdBu") +
+      scale_x_continuous(expand = c(0, 0)) + 
+      scale_y_continuous(expand = c(0, 0)) + 
+      theme_linedraw()
+    return(ggplotly(g) %>% toWebGL())
   })
+  if(FALSE){
   output$fft.intensity <- plotly::renderPlotly({
     if(is.null(rv$dft)) {
       return(NULL)
@@ -77,12 +74,5 @@ shinyServer(function(input, output, session) {
     imshow(rv$wavelet@time, rv$wavelet@frequency, data, 
          type = rv$plot.type, interactive = TRUE, component = "intensity")
   })
-  output$wavelet.phase <- plotly::renderPlotly({
-    if(is.null(rv$wavelet)){
-      return(NULL)
-    }
-    data <- t(rv$wavelet@data[, , rv$wavelet.idx])
-    imshow(rv$wavelet@time, rv$wavelet@frequency, data, 
-         type = rv$plot.type, interactive = TRUE, component = "phase")
-  })
+  }
 })
