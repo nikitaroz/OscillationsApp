@@ -110,4 +110,23 @@ scaleData <- function(object, nx = length(object@wavelength),
   return(interp)
 }
 
+time2invcm <- function(x) {
+  c <- 299792458
+  # picoseconds 
+  freq <- x * (1e+12/ diff(range(x)))
+  invcm <- freq / (c * 100)
+  return(invcm)
+}
+
+dft <- function(object) {
+  f <- apply(object, 2, fft)
+  
+  trimmed <- f[1:(ceiling(length(f@data$x)/2) + 1), ]
+  times <- trimmed@data$x
+  trimmed@data$x <- time2invcm(times)
+
+  return(trimmed)
+}
+
+
 

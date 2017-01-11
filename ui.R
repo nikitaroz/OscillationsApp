@@ -7,37 +7,74 @@
 library(plotly)
 
 shinyUI(
-
   navbarPage(title = "Oscillations in Spectroscopy",
-                tabPanel("Data Input", 
-                          sidebarLayout(
-                            sidebarPanel(
-                            fileInput('file', NULL,
-                                       accept=c('text/csv', 
-                                                'text/comma-separated-values,text/plain', 
-                                                '.csv'))
+    tabPanel("Data Input", 
+        fluidPage(
+          fluidPage(
+            fileInput(
+              'file', NULL, accept=c('text/csv', 
+                                   'text/comma-separated-values,text/plain', 
+                                    '.csv')
+            )
+          ),
+            fluidRow(
+              column(9,
+                plotOutput("raw",
+                           brush = brushOpts(
+                            id = "raw.brush",
+                            direction = c("x") 
+                           ), width = "100%"
                            ),
-                           mainPanel(
-                             plotlyOutput("data.plot", height = "600px")
-                           ) 
-                            
-                          )),
-                tabPanel("FFT", 
-                  splitLayout(
-                    plotly::plotlyOutput("fft.intensity"),
-                    plotly::plotlyOutput("fft.phase")
-                  )         
-                ),
-                tabPanel("Wavelets", 
-                  fluidPage(
-                    sliderInput(inputId = "data.select", label = NULL, width = "100%",
-                                min = 0, max = 100, value = 10, step = 1),
-                    splitLayout(
-                      plotly::plotlyOutput("wavelet.intensity")
-                  )
-                  )
-                )
-   )
+                plotOutput("raw.x", width = "100%", height = "150px")
+              ),
+              column(3,
+                plotOutput("raw.y", width = "100%")
+              )
+            ) 
+        )
+      ),
+      tabPanel("FFT", 
+               fluidPage(
+                 fluidRow(
+                   column(9,
+                          plotOutput("fft.power",
+                                     brush = brushOpts(
+                                       id = "fft.brush",
+                                       direction = c("x") 
+                                     ), width = "100%"
+                          ),
+                          plotOutput("fft.power.x", width = "100%", height = "150px")
+                   ),
+                   column(3,
+                          plotOutput("fft.power.y", width = "100%")
+                   )
+                 ) 
+               ),
+               fluidPage(
+                 fluidRow(
+                   column(9,
+                          plotOutput("fft.phase",
+                                     brush = brushOpts(
+                                       id = "fft.phase.brush",
+                                       direction = c("x") 
+                                     ), width = "100%"
+                          ),
+                          plotOutput("fft.phase.x", width = "100%", height = "150px")
+                   ),
+                   column(3,
+                          plotOutput("fft.phase.y", width = "100%")
+                   )
+                 ) 
+               ) 
+      ),
+      tabPanel("Wavelets", 
+        fluidPage(
+          splitLayout(
+            plotOutput("wavelet.intensity")
+          )
+        )
+    )
+  )
 )
 
   
