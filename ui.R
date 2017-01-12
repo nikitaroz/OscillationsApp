@@ -70,11 +70,15 @@ shinyUI(
       tabPanel("Wavelets", 
         fluidPage(
           splitLayout(
-            plotOutput("wavelet.intensity")
+            plotOutput("wavelet"),
+            plotOutput("wavelet.selector", brush = brushOpts(
+              id = "wavelet.brush",
+              direction = c("x") 
+              )
+            )
           )
         )
     )
   )
 )
-
   

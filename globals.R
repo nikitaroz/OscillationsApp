@@ -1,5 +1,7 @@
 library(hyperSpec)
 library(fields)
+library(Rwave)
+library(plyr)
 
 setClass("Spectra", 
   contains = "hyperSpec"
@@ -32,10 +34,7 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
     wavelength <- wavelength[bad.wavelengths]
     data <- data[, bad.wavelengths]
   }
-  d = data.frame(
-    x = rep(wavelength, times = length(time)),
-    y = rep(time, each = length(wavelength))
-  )
+  
   dimnames(data) <- list(x = time, y = wavelength)
   spec.data <- new ("Spectra", 
                     data = data.frame(
@@ -113,7 +112,7 @@ scaleData <- function(object, nx = length(object@wavelength),
 time2invcm <- function(x) {
   c <- 299792458
   # picoseconds 
-  freq <- x * (1e+12/ diff(range(x)))
+  freq <- x * (1e+12/ mean(diff(x)))
   invcm <- freq / (c * 100)
   return(invcm)
 }
@@ -128,5 +127,30 @@ dft <- function(object) {
   return(trimmed)
 }
 
-
-
+wavelet <- function(input, noctave, nvoice=1, w0=2 * pi, twoD=TRUE) {
+  # TODO: maybe change
+  
+  data <- apply(input[[]], 2, function(x){
+    Mod(cwt(x, noctave, nvoice = nvoice, plot = FALSE))^2
+    }
+  )
+  
+  scales <- (2^(1/nvoice))^(0:(noctave * nvoice - 1))
+  
+  dt <- mean(diff(input@data$x)) * 1e-12
+  frequency <- w0 / (scales * dt * 4 * pi)
+  c <- 299792458
+  invcm <- frequency / (100 * c)
+  
+  
+  spectra <- new("Spectra", 
+         data = data.frame(
+           x = rep(input@data$x, times = length(invcm)),
+           y = rep(invcm, each = length(input@data$x))
+         ),
+         spc = data,
+         wavelength = input@wavelength
+  )
+}
+data <- loadData(file = "~/Desktop/OscillationsApp/data/HBDI.csv")
+data <- scaleData(trimData(data))

@@ -1,9 +1,8 @@
 
 
 library(shiny)
-library(ggplot2)
-library(plotly)
 library(RColorBrewer)
+library(plotrix)
 
 source("globals.R")
 
@@ -31,6 +30,14 @@ shinyServer(function(input, output, session) {
       phase = apply(data, 1:2, Arg)
     )
     return(output)
+  })
+  
+  wavelet.data <- reactive({
+    data <- processed.data()
+    if(is.null(data)) {
+      return(NULL)
+    }
+    return(wavelet(data, 4, 8))
   })
 
   output$raw <- renderPlot({
@@ -90,7 +97,7 @@ shinyServer(function(input, output, session) {
             xlab="")
     plotmat(data, contour = TRUE, col = c("black"), add = TRUE,
             xlab="")
-  })  
+  })
   
   output$fft.power.x <- renderPlot({
     data <- fft.data()
@@ -173,16 +180,19 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  if(FALSE){
-  output$fft.phase <- renderPlotly({
-    if(is.null(rv$dft)) {
+  output$wavelet <- renderPlot({
+    data <- wavelet.data()
+    if(is.null(wavelet.data())) {
       return(NULL)
     }
-  })
-  output$wavelet.intensity <- renderPlotly({
-    if(is.null(rv$wavelet)) {
-      return(NULL)
+    if(!is.null(input$wavelet.brush)) {
+      data <- data[l = input$wavelet.brush$xmin:input$wavelet.brush$xmax]
     }
+    plotmap(data, aspect = "fill", contour = TRUE, 
+            col.regions = brewer.pal(9, "YlOrRd"), cuts = 8)
   })
-  }
+  
+  output$wavelet.selector <- renderPlot({
+    plotspc(fft.data()$power, func = sum, plot.args = list(xaxs="i", yaxs="i"))
+  })
 })
