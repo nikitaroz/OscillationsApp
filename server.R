@@ -46,12 +46,9 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     zmax = max(abs(data))
-    par(mar=c(2,2,0,5))
-    par(oma=c(0,0,0,0))
-    plotmat(data, contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax),
-            xlab="")
-    plotmat(data, contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax),
-            xlab="")
+    par(mar=c(4,4,1,10))
+    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax))
+    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax))
   })  
     
   output$raw.x <- renderPlot({
@@ -59,10 +56,10 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(2,2,0,5))
-    par(oma=c(0,0,0,0))
+    par(mar=c(0,4,1,10))
+    integrated.data <- colSums(data, label.spc = expression("integrated intensity"))
     plotspc(data, func = sum, plot.args = list(xaxs="i", yaxs="i"))
-    title(ylab = "integrated intensity")
+    
   })
   
   output$raw.y <- renderPlot({
@@ -70,15 +67,17 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
+    #par(mar=c(2,2,0,0))
+    #par(oma=c(0,0,0,0))
     par(mar=c(2,2,0,0))
     par(oma=c(0,0,0,0))
-    
-    plot(x = apply(data[[]], 1, sum), y = data@data$x, type = "l", xaxs="i", 
-         yaxs="i")
+    print(dim(data[[]]))
+    plot(x = rowSums(data[[]]), y = data@data$x, type = "l")
     if(!is.null(input$raw.brush)){
-      trimmed.data <- data[[l = input$raw.brush$xmin:input$raw.brush$xmax]]
-      lines(x = apply(trimmed.data, 1, sum), y = data@data$x, type = "l", 
-           xaxs="i", yaxs="i", col = 'blue', lwd=8)
+      l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
+      trimmed.data <- data[[l = l, wl.index = TRUE]]
+      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
+            col = 'blue', lwd=8)
     }
   })
   
@@ -125,9 +124,10 @@ shinyServer(function(input, output, session) {
     plot(x = x, y = data@data$x, type = "l", xaxs="i", 
          yaxs="i", xlim = c(0, max(x)))
     if(!is.null(input$fft.brush)){
-      trimmed.data <- data[[l = input$fft.brush$xmin:input$fft.brush$xmax]]
-      lines(x = apply(trimmed.data, 1, sum), y = data@data$x, type = "l", 
-            xaxs="i", yaxs="i", col = 'blue', lwd=8)
+      l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
+      trimmed.data <- data[[l = l, wl.index = TRUE]]
+      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
+            col = 'blue', lwd=8)
     }
   })
   
@@ -174,9 +174,10 @@ shinyServer(function(input, output, session) {
     plot(x = x, y = data@data$x, type = "l", xaxs="i", 
          yaxs="i")
     if(!is.null(input$fft.phase.brush)){
-      trimmed.data <- data[[l = input$fft.phase.brush$xmin:input$fft.phase.brush$xmax]]
-      lines(x = apply(trimmed.data, 1, sum), y = data@data$x, type = "l", 
-            xaxs="i", yaxs="i", col = 'blue', lwd=8)
+      l = wl2i(data, input$fft.phase.brush$xmin):wl2i(data, input$fft.phase.brush$xmax)
+      trimmed.data <- data[[l = l, wl.index = TRUE]]
+      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
+            col = 'blue', lwd=8)
     }
   })
   
