@@ -37,11 +37,16 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
   
   dimnames(data) <- list(x = time, y = wavelength)
   spec.data <- new ("Spectra", 
-                    data = data.frame(
-                      x = time
-                    ),
-                    spc = data,
-                    wavelength = wavelength
+    data = data.frame(
+      x = time
+    ),
+    spc = data,
+    wavelength = wavelength,
+    label = list(
+      x = expression("Time (ps)"),
+      spc = expression("Stimulated Raman gain"),
+      .wavelength = expression("Wavelength (nm)")
+    )                
   )
   return(spec.data)
 }
@@ -81,13 +86,7 @@ trimData <- function(object,
     }
   }
   
-  trimmed <- new ("Spectra", 
-                    data = data.frame(
-                      x = object@data$x[start.idx:end.idx]
-                    ),
-                    spc = object[start.idx:end.idx, ],
-                    wavelength = object@wavelength
-  )
+  trimmed <- object[start.idx:end.idx, ]
   return(trimmed)
 }
 
@@ -100,11 +99,12 @@ scaleData <- function(object, nx = length(object@wavelength),
   interp.list <- list(x = x.interp, y = y.interp)
   interp.grid <- interp.surface.grid(data, interp.list)
   interp <- new ("Spectra", 
-                    data = data.frame(
-                      x = y.interp
-                    ),
-                    spc = t(interp.grid$z),
-                    wavelength = x.interp
+    data = data.frame(
+      x = y.interp
+    ),
+    spc = t(interp.grid$z),
+    wavelength = x.interp,
+    label = object@label
   )
   return(interp)
 }
@@ -144,12 +144,17 @@ wavelet <- function(input, noctave, nvoice=1, w0=2 * pi, twoD=TRUE) {
   
   
   spectra <- new("Spectra", 
-         data = data.frame(
-           x = rep(input@data$x, times = length(invcm)),
-           y = rep(invcm, each = length(input@data$x))
-         ),
-         spc = data,
-         wavelength = input@wavelength
+    data = data.frame(
+      x = rep(input@data$x, times = length(invcm)),
+      y = rep(invcm, each = length(input@data$x))
+    ),
+    spc = data,
+   wavelength = input@wavelength,
+   labels = list(
+     x = input@label$x,
+     y = expression("Frequency (cm^-1)"),
+     .wavelength = input@label$.wavelenght
+   )
   )
 }
 data <- loadData(file = "~/Desktop/OscillationsApp/data/HBDI.csv")
