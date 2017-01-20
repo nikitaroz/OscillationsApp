@@ -46,7 +46,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     zmax = max(abs(data))
-    par(mar=c(4,4,1,10))
+    par(mar=c(4,4,1,6))
     plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax))
   })  
@@ -56,9 +56,9 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(0,4,1,10))
+    par(mar=c(4,4,1,6))
     integrated.data <- colSums(data, label.spc = expression("integrated intensity"))
-    plotspc(data, func = sum, plot.args = list(xaxs="i"))
+    plotspc(integrated.data, plot.args = list(xaxs="i"))
     
   })
   
@@ -67,11 +67,10 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    #par(mar=c(2,2,0,0))
-    #par(oma=c(0,0,0,0))
-    par(mar=c(2,2,0,0))
+    par(mar=c(4,4,1,2))
     
-    plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l")
+    plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
+         xlab = "Integrated intensity", ylab = "Time (ps)")
     if(!is.null(input$raw.brush)){
       l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
@@ -89,10 +88,10 @@ shinyServer(function(input, output, session) {
     }
     data <- data$power
     zmax = max(abs(data))
-    par(mar=c(2,2,0,5))
-    par(oma=c(0,0,0,0))
-    plotmat(data, contour = FALSE, col = brewer.pal(100, "YlOrRd"))
-    plotmat(data, contour = TRUE, col = c("black"), add = TRUE)
+
+    par(mar=c(4,5,1,6))
+    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "YlOrRd"))
+    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
   })
   
   output$fft.power.x <- renderPlot({
@@ -116,10 +115,10 @@ shinyServer(function(input, output, session) {
     data <- data$power
     
     par(mar=c(2,2,0,0))
-    par(oma=c(0,0,0,0))
-    x = apply(data[[]], 1, sum)
-    plot(x = x, y = data@data$x, type = "l", 
-         yaxs="i", xlim = c(0, max(x)))
+    
+    
+    plot(x = rowSums(data[[]]), y = data@data$x, type = "l", 
+         yaxs="i")
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
@@ -137,10 +136,10 @@ shinyServer(function(input, output, session) {
     }
     data <- data$phase
     zmax = max(abs(data))
-    par(mar=c(2,2,0,5))
     
-    plotmat(data, contour = FALSE, col = brewer.pal(100, "RdBu"))
-    plotmat(data, contour = TRUE, col = c("black"), add = TRUE)
+    par(mar=c(4,5,1,6))
+    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"))
+    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
   })  
   
   output$fft.phase.x <- renderPlot({

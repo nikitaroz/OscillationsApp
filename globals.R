@@ -111,8 +111,8 @@ scaleData <- function(object, nx = length(object@wavelength),
 
 time2invcm <- function(x) {
   c <- 299792458
-  # picoseconds 
-  freq <- x * (1e+12/ mean(diff(x)))
+  # TODO: convert data to S.I. units, and remove 1E12 conversion factor 
+  freq <- (0:ceiling(length(x)/2))/length(x) * (1e+12/ mean(diff(x)))
   invcm <- freq / (c * 100)
   return(invcm)
 }
@@ -121,9 +121,9 @@ dft <- function(object) {
   f <- apply(object, 2, fft)
   
   trimmed <- f[1:(ceiling(length(f@data$x)/2) + 1), ]
-  times <- trimmed@data$x
+  times <- object@data$x
   trimmed@data$x <- time2invcm(times)
-
+  trimmed@label$x <- expression(Frequency (cm^{-1}))
   return(trimmed)
 }
 
@@ -152,10 +152,8 @@ wavelet <- function(input, noctave, nvoice=1, w0=2 * pi, twoD=TRUE) {
    wavelength = input@wavelength,
    labels = list(
      x = input@label$x,
-     y = expression("Frequency (cm^-1)"),
-     .wavelength = input@label$.wavelenght
+     y = expression(paste("Frequency (cm" ^ "-1", ")")),
+     .wavelength = input@label$.wavelength
    )
   )
 }
-data <- loadData(file = "~/Desktop/OscillationsApp/data/HBDI.csv")
-data <- scaleData(trimData(data))
