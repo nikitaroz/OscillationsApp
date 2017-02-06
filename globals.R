@@ -43,7 +43,7 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
     spc = data,
     wavelength = wavelength,
     label = list(
-      x = expression("Time (ps)"),
+      x = expression("Time (s)"),
       spc = expression("Stimulated Raman gain"),
       .wavelength = expression("Wavelength (nm)")
     )                
@@ -79,7 +79,7 @@ trimData <- function(object,
     
     for (i in (start.idx + 1):end.idx) {
       difference <- abs(object@data$x[i - 1] - object@data$x[i])
-      if (abs(difference - delta) > 1e-05) {
+      if (abs(difference - delta) > 50e-15) {
         end.idx <- i - 1
         (break)()
       }
@@ -111,9 +111,12 @@ scaleData <- function(object, nx = length(object@wavelength),
 
 time2invcm <- function(x) {
   c <- 299792458
-  # TODO: convert data to S.I. units, and remove 1E12 conversion factor 
-  freq <- (0:ceiling(length(x)/2))/length(x) * (1e+12/ mean(diff(x)))
-  invcm <- freq / (c * 100)
+  print(mean(diff(x)))
+  fs <- 1 / mean(diff(x))
+  l = ceiling(length(x)/2) + 1
+  f <- seq(from = 0, by = 1, length.out = l) * fs / (length(x))
+  invcm <- f / (100 * c)
+  print(invcm)
   return(invcm)
 }
 
@@ -122,7 +125,7 @@ dft <- function(object) {
   
   trimmed <- f[1:(ceiling(length(f@data$x)/2) + 1), ]
   times <- object@data$x
-  trimmed@data$x <- time2invcm(times)
+  trimmed@data$x <- time2invcm(times)[1:(ceiling(length(f@data$x)/2) + 1)]
   trimmed@label$x <- expression(Frequency (cm^{-1}))
   return(trimmed)
 }
@@ -137,7 +140,7 @@ wavelet <- function(input, noctave, nvoice=1, w0=2 * pi, twoD=TRUE) {
   
   scales <- (2^(1/nvoice))^(0:(noctave * nvoice - 1))
   
-  dt <- mean(diff(input@data$x)) * 1e-12
+  dt <- mean(diff(input@data$x))
   frequency <- w0 / (scales * dt * 4 * pi)
   c <- 299792458
   invcm <- frequency / (100 * c)

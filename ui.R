@@ -4,21 +4,35 @@
 #
 # http://shiny.rstudio.com
 #
-library(plotly)
 
 shinyUI(
   navbarPage(title = "Oscillations in Spectroscopy",
     tabPanel("Data Input", 
         fluidPage(
-          fluidPage(
-            fileInput(
-              'file', NULL, accept=c('text/csv', 
-                                   'text/comma-separated-values,text/plain', 
-                                    '.csv')
-            )
-          ),
             fluidRow(
-              column(9,
+              column(3, 
+                wellPanel(
+                  fileInput(
+                    'file', NULL, accept=c('text/csv', 
+                                           'text/comma-separated-values,text/plain', 
+                                           '.csv')
+                  ),
+                  selectInput("x.axis", label = "label", selected = 1,
+                              choices = list(
+                                "Wavelength" = 1,
+                                "Wavenumber" = 2
+                              )
+                  ),
+                  selectInput("time", label = "time scale", selected = 1E-12,
+                              choices = list(
+                                "picoseconds (ps)" = 1E-12,
+                                "femtoseconds (fs)" = 1E-15,
+                                "seconds (s)" = 1
+                              ) 
+                  )
+                )
+              ),
+              column(7,
                 plotOutput("raw",
                            brush = brushOpts(
                             id = "raw.brush",
@@ -27,7 +41,7 @@ shinyUI(
                            ),
                 plotOutput("raw.x", width = "100%", height = "150px")
               ),
-              column(3,
+              column(2,
                 plotOutput("raw.y", width = "100%")
               )
             ) 

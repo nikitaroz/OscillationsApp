@@ -12,8 +12,13 @@ shinyServer(function(input, output, session) {
   processed.data <- reactive({
     if(!is.null(input$file)) {
       data <- loadData(file = input$file$datapath)
+      if(input$x.axis == 2){
+        data@label$.wavelength = expression(Wavenumber (cm^{-1}))
+      }
       
-      return(scaleData(trimData(data), nx = 400))
+      data <- scaleData(trimData(data), nx = 400)
+      data@data$x <- data@data$x * as.numeric(input$time)
+      return(data)
     } else {
       return(NULL)
     }
@@ -71,7 +76,7 @@ shinyServer(function(input, output, session) {
     par(mar=c(4,4,1,2))
     
     plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
-         xlab = "Integrated intensity", ylab = "Time (ps)")
+         xlab = "Integrated intensity", ylab = "Time (s)")
     if(!is.null(input$raw.brush)){
       l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
@@ -117,9 +122,10 @@ shinyServer(function(input, output, session) {
     
     par(mar=c(2,2,0,0))
     
-    
-    plot(x = rowSums(data[[]]), y = data@data$x, type = "l", 
-         yaxs="i")
+    x.data <- rowSums(data[[]])
+    plot(x = x.data, y = data@data$x, xlim = c(0, max(x.data)), type = "l", 
+         yaxs="i"
+    )
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
