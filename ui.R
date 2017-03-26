@@ -13,8 +13,8 @@ shinyUI(
                   ),
                   selectInput("x.axis", label = "label", selected = 1,
                               choices = list(
-                                "wavelength" = 1,
-                                "wavenumber" = 2
+                                "wavelength" = "wavelength",
+                                "wavenumber" = "wavenumber"
                               )
                   ),
                   selectInput("time", label = "time scale", selected = 1E-12,
@@ -48,8 +48,8 @@ shinyUI(
                       wellPanel(
                         selectInput("fft.datatype", label = "FFT output", 
                                     selected = "power", choices = list(
-                                      "power" = 1,
-                                      "phase" = 2
+                                      "power" = "power",
+                                      "phase" = "phase"
                                     )
                         ),
                         selectInput("fft.filter", label = "filter", selected = "none",

@@ -11,7 +11,7 @@ shinyServer(function(input, output, session) {
   processed.data <- reactive({
     if(!is.null(input$file)) {
       data <- loadData(file = input$file$datapath)
-      if(input$x.axis == 2){
+      if(input$x.axis == "wavenumber"){
         data@label$.wavelength = expression(Wavenumber (cm^{-1}))
       }
       
@@ -37,7 +37,7 @@ shinyServer(function(input, output, session) {
        "boxcar" = boxcar(ntime),
        "gausswin" = gausswin(ntime),
        "hamming" = hamming(ntime),
-       "hanning" = hanning(nime),
+       "hanning" = hanning(ntime),
        "triang" = triang(ntime)
     )
     if(!is.null(w)) {
@@ -106,12 +106,14 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    if(input$fft.datatype == 1) {
+    if(input$fft.datatype == "power") {
       data <- data$power
       palette <- "YlOrRd"
-    } else {
+    } else if(input$fft.datatype == "phase") {
       data <- data$phase
       palette <- "RdBu" 
+    } else {
+      return(NULL)
     }
 
     par(mar=c(4,5,1,6))
@@ -125,10 +127,12 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    if(input$fft.datatype == 1) {
+    if(input$fft.datatype == "power") {
       data <- data$power
-    } else {
+    } else if(input$fft.datatype == "phase"){
       data <- data$phase
+    } else {
+      return(NULL)
     }
     
     par(mar=c(2,2,0,5))
@@ -143,15 +147,17 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    if(input$fft.datatype == 1) {
+    if(input$fft.datatype == "power") {
       data <- data$power
       x.data <- rowSums(data[[]])
       xlim <- c(0, max(x.data))
-    } else {
+    } else if(input$fft.datatype == "phase"){
       data <- data$phase
       x.data <- rowSums(data[[]])
       datalim <- max(abs(x.data))
       xlim <- c(-datalim, datalim)
+    } else {
+      return(NULL)
     }
     
     par(mar=c(2,2,0,0))
