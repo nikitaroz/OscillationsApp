@@ -130,11 +130,11 @@ dft <- function(object) {
   return(trimmed)
 }
 
-wavelet <- function(input, noctave, nvoice=1, w0=2 * pi, twoD=TRUE) {
+wavelet <- function(input, noctave, nvoice = 1, w0 = 2 * pi, twoD = TRUE) {
   # TODO: maybe change
   
   data <- apply(input[[]], 2, function(x){
-    Mod(cwt(x, noctave, nvoice = nvoice, plot = FALSE))^2
+    Mod(cwt(x, noctave, nvoice = nvoice, w0 = w0, plot = FALSE))^2
     }
   )
   

@@ -77,14 +77,18 @@ shinyUI(
       tabPanel("Wavelets", 
         fluidPage(
           fluidRow(
-            column(3
+            column(3,
+              sliderInput("noctaves", label = "octaves", 1, 10, value = 4),
+              sliderInput("nvoices", label = "voices", 1, 16, value = 8),
+              sliderInput("w0", label = "central frequency (ratio of 2\U03C0)", 
+                          0.5, 5.0, value = 1.0, step = 0.1)
             ),
             column(9,
               plotOutput("wavelet"),
               plotOutput("wavelet.selector", brush = brushOpts(
                 id = "wavelet.brush",
                 direction = c("x") 
-                )
+                ), height = "150px"
               )
             )
           )

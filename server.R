@@ -41,7 +41,7 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    return(wavelet(data, 4, 8))
+    return(wavelet(data, input$noctaves, input$nvoices, w0 = input$w0 * 2*pi))
   })
 
   output$raw <- renderPlot({
@@ -90,8 +90,6 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    
-    par(mar=c(4,5,1,6))
     
     if(input$fft.datatype == 1) {
       data <- data$power
@@ -163,11 +161,16 @@ shinyServer(function(input, output, session) {
     if(!is.null(input$wavelet.brush)) {
       data <- data[l = input$wavelet.brush$xmin:input$wavelet.brush$xmax]
     }
+    par(mar=c(4,5,1,6))
+    
     plotmap(data, aspect = "fill", contour = TRUE, 
             col.regions = brewer.pal(9, "YlOrRd"), cuts = 8)
   })
   
   output$wavelet.selector <- renderPlot({
-    plotspc(fft.data()$power, func = sum, plot.args = list(xaxs="i", yaxs="i"))
+    par(mar=c(2,2,0,5))
+    par(oma=c(0,0,0,0))
+    plotspc(fft.data()$power, func = sum, plot.args = list(xaxs="i"))
+    title(ylab = "integrated intensity")
   })
 })
