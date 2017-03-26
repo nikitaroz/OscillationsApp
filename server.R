@@ -1,5 +1,3 @@
-
-
 library(shiny)
 library(RColorBrewer)
 library(plotrix)
