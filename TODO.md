@@ -9,3 +9,4 @@ Major things to complete.
 - [ ] FFT window functions should have plots
 - [ ] CSS themes
 - [ ] Example data option
+- [ ] Download Plot, data
