@@ -1,4 +1,5 @@
 library(shiny)
+library(signal)
 library(RColorBrewer)
 library(plotrix)
 
@@ -27,7 +28,21 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    # TODO: window functions will go here
+    ntime <- length(data@data$x)
+
+    w <- switch(input$fft.filter, 
+       "none" = NULL,
+       "bartlett" = bartlett(ntime),
+       "blackman" = blackman(ntime),
+       "boxcar" = boxcar(ntime),
+       "gausswin" = gausswin(ntime),
+       "hamming" = hamming(ntime),
+       "hanning" = hanning(nime),
+       "triang" = triang(ntime)
+    )
+    if(!is.null(w)) {
+      data <- apply(data, 1, function(x){x * w})
+    }
     data <- dft(data)
     output <- list (
       power = apply(data, 1:2, function(x){Mod(x)^2}),

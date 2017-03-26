@@ -52,9 +52,16 @@ shinyUI(
                                       "phase" = 2
                                     )
                         ),
-                        selectInput("filter", label = "filter", selected = "none",
+                        selectInput("fft.filter", label = "filter", selected = "none",
                                     choices = list(
-                                      "none" = 1
+                                      "none" = "none",
+                                      "Bartlett" = "bartlett",
+                                      "Blackman" = "blackman",
+                                      "Boxcar" = "boxcar",
+                                      "Gaussian" = "gausswin",
+                                      "Hamming" = "hamming",
+                                      "Hanning" = "hanning",
+                                      "Triangular" = "triang"
                                     )
                         )
                       )
