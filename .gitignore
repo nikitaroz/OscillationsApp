@@ -1,3 +1,5 @@
+# ignore test data directory
+data/
 
 # ignore data files for R
 .RData
