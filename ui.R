@@ -1,7 +1,9 @@
+library(shiny)
+library(shinythemes)
 
 shinyUI(
   navbarPage(title = "Oscillations in Spectroscopy",
-    tabPanel("Data Input", 
+    tabPanel("Data Input",
         fluidPage(
             fluidRow(
               column(3, 
@@ -17,11 +19,11 @@ shinyUI(
                                 "wavenumber" = "wavenumber"
                               )
                   ),
-                  selectInput("time", label = "time scale", selected = 1E-12,
+                  selectInput("time", label = "time scale", selected = 1,
                               choices = list(
-                                "picoseconds (ps)" = 1E-12,
-                                "femtoseconds (fs)" = 1E-15,
-                                "seconds (s)" = 1
+                                "picoseconds (ps)" = 1,
+                                "femtoseconds (fs)" = 1E-3,
+                                "seconds (s)" = 1E12
                               ) 
                   )
                 )
@@ -31,12 +33,12 @@ shinyUI(
                            brush = brushOpts(
                             id = "raw.brush",
                             direction = c("x") 
-                           ), width = "100%"
+                           )
                 ),
-                plotOutput("raw.x", width = "100%", height = "150px")
+                plotOutput("raw.x", height = "150px")
               ),
               column(2,
-                plotOutput("raw.y", width = "100%")
+                plotOutput("raw.y")
               )
             ) 
         )
@@ -71,12 +73,12 @@ shinyUI(
                                      brush = brushOpts(
                                        id = "fft.brush",
                                        direction = c("x") 
-                                     ), width = "100%"
+                                     )
                           ),
-                          plotOutput("fft.x", width = "100%", height = "150px")
+                          plotOutput("fft.x", height = "150px")
                    ),
                    column(2,
-                          plotOutput("fft.y", width = "100%")
+                          plotOutput("fft.y")
                    )
                  ) 
                )
@@ -100,6 +102,9 @@ shinyUI(
             )
           )
         )
-      )
+      ), theme = shinytheme("united"), 
+    tags$head(
+      tags$link(rel="stylesheet", type="text/css", href="style.css")
+    )
   )
 )

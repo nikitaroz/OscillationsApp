@@ -16,6 +16,7 @@ shinyServer(function(input, output, session) {
       }
       
       data <- scaleData(trimData(data), nx = 400)
+      # picoseconds are default times
       data@data$x <- data@data$x * as.numeric(input$time)
       return(data)
     } else {
@@ -65,9 +66,11 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     zmax = max(abs(data))
-    par(mar=c(4,4,1,6))
+    par(mar=c(4.5,5,1,7.5))
+    
     plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax))
+    nxticks <<- length(axTicks(1))
   })  
     
   output$raw.x <- renderPlot({
@@ -75,10 +78,11 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(4,4,1,6))
-    integrated.data <- colSums(data, label.spc = expression("integrated intensity"))
-    plotspc(integrated.data, plot.args = list(xaxs="i"))
-    
+    par(mar=c(1.5,5,1,7.5))
+    integrated.data <- colSums(data, label.spc = "integrated intensity")
+    plotspc(integrated.data, func = sum, plot.args = list(xaxs="i"), 
+            title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
+            nxticks = nxticks)
   })
   
   output$raw.y <- renderPlot({
@@ -86,10 +90,12 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(4,4,1,2))
+    par(mar=c(4.5,1,1,1.5))
+    
     
     plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
-         xlab = "Integrated intensity", ylab = "Time (s)")
+         xlab = "Integrated intensity", ylab = "", yaxt = "n")
+    axis(side = 2, labels = FALSE)
     if(!is.null(input$raw.brush)){
       l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
@@ -116,7 +122,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
 
-    par(mar=c(4,5,1,6))
+    par(mar=c(4.5,5,1,7.5))
     plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, palette))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
   
@@ -135,10 +141,11 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    par(mar=c(2,2,0,5))
-    par(oma=c(0,0,0,0))
-    plotspc(data, func = sum, plot.args = list(xaxs="i"))
-    title(ylab = "integrated intensity")
+    par(mar=c(1.5,5,1,7.5))
+    integrated.data <- colSums(data, label.spc = "integrated intensity")
+    plotspc(integrated.data, plot.args = list(xaxs="i"), 
+            title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
+            nxticks = nxticks)
   })
   
   output$fft.y <- renderPlot({
@@ -160,12 +167,11 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    par(mar=c(2,2,0,0))
+    par(mar=c(4.5,1,1,1.5))
     
+    plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
+         xlab = "Integrated intensity", ylab = "", yaxt = "n")
     
-    plot(x = x.data, y = data@data$x, xlim = xlim, type = "l", 
-         yaxs="i"
-    )
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]

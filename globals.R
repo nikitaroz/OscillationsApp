@@ -43,7 +43,7 @@ loadData <- function(file = file.choose(), sep = ",", ...) {
     spc = data,
     wavelength = wavelength,
     label = list(
-      x = expression("Time (s)"),
+      x = expression("Time (ps)"),
       spc = expression("Stimulated Raman gain"),
       .wavelength = expression("Wavelength (nm)")
     )                
@@ -110,12 +110,12 @@ scaleData <- function(object, nx = length(object@wavelength),
 }
 
 time2invcm <- function(x) {
+  # time in picoseconds
   c <- 299792458
-  fs <- 1 / mean(diff(x))
+  fs <- 1E12 / mean(diff(x))
   l = ceiling(length(x)/2) + 1
   f <- seq(from = 0, by = 1, length.out = l) * fs / (length(x))
   invcm <- f / (100 * c)
-  print(invcm)
   return(invcm)
 }
 
@@ -130,7 +130,7 @@ dft <- function(object) {
 }
 
 wavelet <- function(input, noctave, nvoice = 1, w0 = 2 * pi, twoD = TRUE) {
-  # TODO: maybe change
+  # time in picoseconds
   
   data <- apply(input[[]], 2, function(x){
     Mod(cwt(x, noctave, nvoice = nvoice, w0 = w0, plot = FALSE))^2
@@ -139,7 +139,7 @@ wavelet <- function(input, noctave, nvoice = 1, w0 = 2 * pi, twoD = TRUE) {
   
   scales <- (2^(1/nvoice))^(0:(noctave * nvoice - 1))
   
-  dt <- mean(diff(input@data$x))
+  dt <- mean(diff(input@data$x)) * 1E-12
   frequency <- w0 / (scales * dt * 4 * pi)
   c <- 299792458
   invcm <- frequency / (100 * c)
