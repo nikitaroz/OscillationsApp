@@ -111,7 +111,6 @@ scaleData <- function(object, nx = length(object@wavelength),
 
 time2invcm <- function(x) {
   c <- 299792458
-  print(mean(diff(x)))
   fs <- 1 / mean(diff(x))
   l = ceiling(length(x)/2) + 1
   f <- seq(from = 0, by = 1, length.out = l) * fs / (length(x))

@@ -29,7 +29,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     ntime <- length(data@data$x)
-
+    
     w <- switch(input$fft.filter, 
        "none" = NULL,
        "bartlett" = bartlett(ntime),
@@ -41,7 +41,7 @@ shinyServer(function(input, output, session) {
        "triang" = triang(ntime)
     )
     if(!is.null(w)) {
-      data <- apply(data, 1, function(x){x * w})
+      data <- apply(data, 2, function(x){x * w})
     }
     data <- dft(data)
     output <- list (
