@@ -87,25 +87,38 @@ shinyServer(function(input, output, session) {
   
   
   
-  output$fft.power <- renderPlot({
+  output$fft <- renderPlot({
     data <- fft.data()
     if(is.null(data)) {
       return(NULL)
     }
-    data <- data$power
-    zmax = max(abs(data))
+    
+    par(mar=c(4,5,1,6))
+    
+    if(input$fft.datatype == 1) {
+      data <- data$power
+      palette <- "YlOrRd"
+    } else {
+      data <- data$phase
+      palette <- "RdBu" 
+    }
 
     par(mar=c(4,5,1,6))
-    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "YlOrRd"))
+    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, palette))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
+  
   })
   
-  output$fft.power.x <- renderPlot({
+  output$fft.x <- renderPlot({
     data <- fft.data()
     if(is.null(data)) {
       return(NULL)
     }
-    data <- data$power
+    if(input$fft.datatype == 1) {
+      data <- data$power
+    } else {
+      data <- data$phase
+    }
     
     par(mar=c(2,2,0,5))
     par(oma=c(0,0,0,0))
@@ -113,67 +126,31 @@ shinyServer(function(input, output, session) {
     title(ylab = "integrated intensity")
   })
   
-  output$fft.power.y <- renderPlot({
+  output$fft.y <- renderPlot({
     data <- fft.data()
     if(is.null(data)) {
       return(NULL)
     }
-    data <- data$power
+    
+    if(input$fft.datatype == 1) {
+      data <- data$power
+      x.data <- rowSums(data[[]])
+      xlim <- c(0, max(x.data))
+    } else {
+      data <- data$phase
+      x.data <- rowSums(data[[]])
+      datalim <- max(abs(x.data))
+      xlim <- c(-datalim, datalim)
+    }
     
     par(mar=c(2,2,0,0))
     
-    x.data <- rowSums(data[[]])
-    plot(x = x.data, y = data@data$x, xlim = c(0, max(x.data)), type = "l", 
+    
+    plot(x = x.data, y = data@data$x, xlim = xlim, type = "l", 
          yaxs="i"
     )
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
-      trimmed.data <- data[[l = l, wl.index = TRUE]]
-      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
-            col = 'blue', lwd=8)
-    }
-  })
-  
-  
-  
-  output$fft.phase <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    data <- data$phase
-    zmax = max(abs(data))
-    
-    par(mar=c(4,5,1,6))
-    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"))
-    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
-  })  
-  
-  output$fft.phase.x <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    data <- data$phase
-    
-    par(mar=c(2,2,0,5))
-    
-    plotspc(data, func = sum, plot.args = list(xaxs="i"))
-    title(ylab = "integrated intensity")
-  })
-  
-  output$fft.phase.y <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    data <- data$phase
-    
-    par(mar=c(2,2,0,0))
-    
-    plot(x = rowSums(data[[]]), y = data@data$x, type = "l", yaxs="i")
-    if(!is.null(input$fft.phase.brush)){
-      l = wl2i(data, input$fft.phase.brush$xmin):wl2i(data, input$fft.phase.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
       lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
             col = 'blue', lwd=8)

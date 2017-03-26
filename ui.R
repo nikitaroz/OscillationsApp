@@ -19,8 +19,8 @@ shinyUI(
                   ),
                   selectInput("x.axis", label = "label", selected = 1,
                               choices = list(
-                                "Wavelength" = 1,
-                                "Wavenumber" = 2
+                                "wavelength" = 1,
+                                "wavenumber" = 2
                               )
                   ),
                   selectInput("time", label = "time scale", selected = 1E-12,
@@ -38,7 +38,7 @@ shinyUI(
                             id = "raw.brush",
                             direction = c("x") 
                            ), width = "100%"
-                           ),
+                ),
                 plotOutput("raw.x", width = "100%", height = "150px")
               ),
               column(2,
@@ -48,51 +48,53 @@ shinyUI(
         )
       ),
       tabPanel("FFT", 
-               fluidPage(
-                 fluidRow(
-                   column(9,
-                          plotOutput("fft.power",
+              fluidPage(
+                fluidRow(
+                   column(3,
+                      wellPanel(
+                        selectInput("fft.datatype", label = "FFT output", 
+                                    selected = "power", choices = list(
+                                      "power" = 1,
+                                      "phase" = 2
+                                    )
+                        ),
+                        selectInput("filter", label = "filter", selected = "none",
+                                    choices = list(
+                                      "none" = 1
+                                    )
+                        )
+                      )
+                  ),
+                  column(7,
+                          plotOutput("fft",
                                      brush = brushOpts(
                                        id = "fft.brush",
                                        direction = c("x") 
                                      ), width = "100%"
                           ),
-                          plotOutput("fft.power.x", width = "100%", height = "150px")
+                          plotOutput("fft.x", width = "100%", height = "150px")
                    ),
-                   column(3,
-                          plotOutput("fft.power.y", width = "100%")
+                   column(2,
+                          plotOutput("fft.y", width = "100%")
                    )
                  ) 
-               ),
-               fluidPage(
-                 fluidRow(
-                   column(9,
-                          plotOutput("fft.phase",
-                                     brush = brushOpts(
-                                       id = "fft.phase.brush",
-                                       direction = c("x") 
-                                     ), width = "100%"
-                          ),
-                          plotOutput("fft.phase.x", width = "100%", height = "150px")
-                   ),
-                   column(3,
-                          plotOutput("fft.phase.y", width = "100%")
-                   )
-                 ) 
-               ) 
+               )
       ),
       tabPanel("Wavelets", 
         fluidPage(
-          splitLayout(
-            plotOutput("wavelet"),
-            plotOutput("wavelet.selector", brush = brushOpts(
-              id = "wavelet.brush",
-              direction = c("x") 
+          fluidRow(
+            column(3
+            ),
+            column(9,
+              plotOutput("wavelet"),
+              plotOutput("wavelet.selector", brush = brushOpts(
+                id = "wavelet.brush",
+                direction = c("x") 
+                )
               )
             )
           )
         )
-    )
+      )
   )
 )
-  
