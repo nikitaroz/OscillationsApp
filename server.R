@@ -90,7 +90,7 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(4.5,1,1,1.5))
+    par(mar=c(4.5,1.5,1,1.5))
     
     
     plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
@@ -167,10 +167,10 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    par(mar=c(4.5,1,1,1.5))
+    par(mar=c(4.5,1.5,1,1.5))
     
-    plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
-         xlab = "Integrated intensity", ylab = "", yaxt = "n")
+    plot(x = rowSums(data[[]]), y = data@data$x, xlim = xlim, yaxs = "i", 
+         type = "l", xlab = "Integrated intensity", ylab = "", yaxt = "n")
     
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
