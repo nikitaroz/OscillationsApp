@@ -13,10 +13,10 @@ shinyUI(
                                            'text/comma-separated-values,text/plain', 
                                            '.csv')
                   ),
-                  selectInput("x.axis", label = "label", selected = 1,
+                  selectInput("x.axis", label = "label", selected = "wavenumber",
                               choices = list(
-                                "wavelength" = "wavelength",
-                                "wavenumber" = "wavenumber"
+                                "wavenumber" = "wavenumber",
+                                "wavelength" = "wavelength"
                               )
                   ),
                   selectInput("time", label = "time scale", selected = 1,
