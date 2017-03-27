@@ -10,11 +10,11 @@ test.f <- function(x, t, w_number = 250) {
 }
 
 x <- seq(from = 600, to = 1000, by = 1)
-t <- seq(from = 0, to = 5, by = 0.05) * 1E-12
+t <- seq(from = 0, to = 2.5, by = 0.05) * 1E-12
 df <- expand.grid(x, t)
 colnames(df) <- c("x", "t")
 df$z <- apply(df, 1, function(x) {test.f(x[1], x[2])})
 df$t <- df$t * 1E12
 
 output.matrix <- acast(df, t~x, value.var = "z")
-write.csv(output.matrix, file = file.choose())
+write.csv(output.matrix, file = "data/simulated.csv")
