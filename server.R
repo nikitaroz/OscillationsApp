@@ -9,7 +9,7 @@ options(shiny.maxRequestSize=100*1024^2)
 shinyServer(function(input, output, session) {
  
   processed.data <- reactive({
-    if(!is.null(input$file) && input$example == "none") {
+  if(!is.null(input$file) && input$example == "none") {
       data <- loadData(file = input$file$datapath)
     } else if(input$example == "experimental"){
       data <- loadData(file = "data/experimental.csv")

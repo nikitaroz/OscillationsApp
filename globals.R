@@ -8,10 +8,10 @@ setClass("Spectra",
 )
 
 loadData <- function(file = file.choose(), sep = ",", ...) {
-  data <- read.table(file, sep = ",", ...)
+  data <- read.table(file, sep = ",", stringsAsFactors = FALSE, ...)
   time <- as.numeric(data[-1, 1])
   wavelength <- as.vector(t(data[1, -1]))
-  data <- as.matrix(data)[-1, -1]
+  data <- as.matrix(data[-1, -1])
   
   if (!is.unsorted(wavelength)) {
     
