@@ -56,16 +56,16 @@ shinyUI(
                         ),
                         selectInput("fft.filter", label = "filter", selected = "none",
                                     choices = list(
-                                      "none" = "none",
+                                      "none" = "boxcar",
                                       "Bartlett" = "bartlett",
                                       "Blackman" = "blackman",
-                                      "Boxcar" = "boxcar",
                                       "Gaussian" = "gausswin",
                                       "Hamming" = "hamming",
                                       "Hanning" = "hanning",
                                       "Triangular" = "triang"
                                     )
-                        )
+                        ),
+                        plotOutput("fft.filter.plot", height = "200px")
                       )
                   ),
                   column(7,
@@ -87,10 +87,12 @@ shinyUI(
         fluidPage(
           fluidRow(
             column(3,
-              sliderInput("noctaves", label = "octaves", 1, 10, value = 4),
-              sliderInput("nvoices", label = "voices", 1, 16, value = 8),
-              sliderInput("w0", label = "central frequency (ratio of 2\U03C0)", 
-                          0.5, 2.0, value = 1.0, step = 0.1)
+              wellPanel(
+                sliderInput("noctaves", label = "octaves", 1, 10, value = 4),
+                sliderInput("nvoices", label = "voices", 1, 16, value = 8),
+                sliderInput("w0", label = "central frequency (ratio of 2\U03C0)", 
+                            0.5, 2.0, value = 1.0, step = 0.1)
+              )
             ),
             column(9,
               plotOutput("wavelet"),

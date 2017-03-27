@@ -12,7 +12,7 @@ shinyServer(function(input, output, session) {
     if(!is.null(input$file)) {
       data <- loadData(file = input$file$datapath)
       if(input$x.axis == "wavenumber"){
-        data@label$.wavelength = expression(Wavenumber (cm^{-1}))
+        data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
       }
       
       data <- scaleData(trimData(data), nx = 400)
@@ -23,8 +23,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
   })
-  
-  fft.data <- reactive({
+  fft.filter <- reactive({
     data <- processed.data()
     if(is.null(data)) {
       return(NULL)
@@ -32,15 +31,23 @@ shinyServer(function(input, output, session) {
     ntime <- length(data@data$x)
     
     w <- switch(input$fft.filter, 
-       "none" = NULL,
-       "bartlett" = bartlett(ntime),
-       "blackman" = blackman(ntime),
-       "boxcar" = boxcar(ntime),
-       "gausswin" = gausswin(ntime),
-       "hamming" = hamming(ntime),
-       "hanning" = hanning(ntime),
-       "triang" = triang(ntime)
+                 "boxcar" = boxcar(ntime),
+                 "bartlett" = bartlett(ntime),
+                 "blackman" = blackman(ntime),
+                 "gausswin" = gausswin(ntime),
+                 "hamming" = hamming(ntime),
+                 "hanning" = hanning(ntime),
+                 "triang" = triang(ntime)
     )
+    return(w)
+  })
+  
+  fft.data <- reactive({
+    data <- processed.data()
+    if(is.null(data)) {
+      return(NULL)
+    }
+    w <- fft.filter()
     if(!is.null(w)) {
       data <- apply(data, 2, function(x){x * w})
     }
@@ -103,7 +110,6 @@ shinyServer(function(input, output, session) {
             col = 'blue', lwd=8)
     }
   })
-  
   
   
   output$fft <- renderPlot({
@@ -180,6 +186,16 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  output$fft.filter.plot <- renderPlot({
+    w <- fft.filter()
+    if(is.null(w)) {
+      return(NULL)
+    }
+    par(mar=c(4, 2, 0.2, 0.2))
+    plot(w, xlab = "Filter", ylab = "", type = "l", ylim = c(0, 1.05))
+  })
+  
+  
   output$wavelet <- renderPlot({
     data <- wavelet.data()
     if(is.null(wavelet.data())) {
@@ -196,7 +212,6 @@ shinyServer(function(input, output, session) {
   
   output$wavelet.selector <- renderPlot({
     par(mar=c(2,2,0,5))
-    par(oma=c(0,0,0,0))
     plotspc(fft.data()$power, func = sum, plot.args = list(xaxs="i"))
     title(ylab = "integrated intensity")
   })
