@@ -3,10 +3,10 @@ Major things to complete.
 
 - [X] Subclass hyperSpec object
 - [X] API restructuring
-- [ ] Label
+- [X] Label
 - [ ] Margins and aesthetics
 - [ ] Add about/getting started tab
-- [ ] FFT window functions should have plots
-- [ ] CSS themes
+- [X] FFT window functions should have plots
+- [X] CSS themes
 - [ ] Example data option
 - [ ] Download Plot, data
