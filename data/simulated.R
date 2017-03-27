@@ -1,5 +1,5 @@
 library(reshape2)
-options(digits=2)
+
 test.f <- function(x, t, w_number = 250) {
   z <- exp(-(x-800)^2/(2*40^2))*cos(2*pi*100*t*299792458*w_number) * (
     as.numeric(t>0 || t<0)*exp(-(t)^2/(2*75E-15^2)) +

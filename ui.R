@@ -112,7 +112,11 @@ shinyUI(
             )
           )
         )
-      ), theme = shinytheme("united"), 
+      ), 
+      tabPanel("About",
+        includeMarkdown("markdown/about.md")
+      ),
+    theme = shinytheme("united"), 
     tags$head(
       tags$link(rel="stylesheet", type="text/css", href="style.css")
     )

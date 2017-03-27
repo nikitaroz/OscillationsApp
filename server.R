@@ -217,8 +217,12 @@ shinyServer(function(input, output, session) {
   })
   
   output$wavelet.selector <- renderPlot({
+    data <- fft.data()
+    if(is.null(data)) {
+      return(NULL)
+    }
     par(mar=c(2,2,0,5))
-    plotspc(fft.data()$power, func = sum, plot.args = list(xaxs="i"))
+    plotspc(data$power, func = sum, plot.args = list(xaxs="i"))
     title(ylab = "integrated intensity")
   })
 })
