@@ -8,5 +8,5 @@ Major things to complete.
 - [ ] Add about/getting started tab
 - [X] FFT window functions should have plots
 - [X] CSS themes
-- [ ] Example data option
+- [X] Example data option
 - [ ] Download Plot, data
