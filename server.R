@@ -9,20 +9,26 @@ options(shiny.maxRequestSize=100*1024^2)
 shinyServer(function(input, output, session) {
  
   processed.data <- reactive({
-    if(!is.null(input$file)) {
+    if(!is.null(input$file) && input$example == "none") {
       data <- loadData(file = input$file$datapath)
-      if(input$x.axis == "wavenumber"){
-        data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
-      }
-      
-      data <- scaleData(trimData(data), nx = 400)
-      # picoseconds are default times
-      data@data$x <- data@data$x * as.numeric(input$time)
-      return(data)
+    } else if(input$example == "experimental"){
+      data <- loadData(file = "data/experimental.csv")
+    } else if(input$example == "simulated") {
+      data <- loadData(file = "data/simulated.csv")
     } else {
       return(NULL)
     }
+    
+    if(input$x.axis == "wavenumber"){
+      data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
+    }
+    
+    data <- scaleData(trimData(data), nx = 400)
+    # picoseconds are default times
+    data@data$x <- data@data$x * as.numeric(input$time)
+    return(data)
   })
+  
   fft.filter <- reactive({
     data <- processed.data()
     if(is.null(data)) {

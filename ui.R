@@ -13,6 +13,14 @@ shinyUI(
                                            'text/comma-separated-values,text/plain', 
                                            '.csv')
                   ),
+                  selectInput(
+                    "example", label = "example datasets", selected = "none",
+                    choices = list(
+                      "none" = "none",
+                      "experimental" = "experimental",
+                      "simulated" = "simulated"
+                    )
+                  ),
                   selectInput("x.axis", label = "label", selected = "wavenumber",
                               choices = list(
                                 "wavenumber" = "wavenumber",
