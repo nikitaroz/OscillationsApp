@@ -95,7 +95,7 @@ shinyServer(function(input, output, session) {
     integrated.data <- colSums(data, label.spc = "integrated intensity")
     plotspc(integrated.data, func = sum, plot.args = list(xaxs="i"), 
             title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
-            nxticks = nxticks)
+            bty="o", nxticks = nxticks)
   })
   
   output$raw.y <- renderPlot({
@@ -155,7 +155,7 @@ shinyServer(function(input, output, session) {
     
     par(mar=c(1.5,5,1,7.5))
     integrated.data <- colSums(data, label.spc = "integrated intensity")
-    plotspc(integrated.data, plot.args = list(xaxs="i"), 
+    plotspc(integrated.data, plot.args = list(xaxs="i"),
             title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
             nxticks = nxticks)
   })
@@ -221,8 +221,9 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(2,2,0,5))
-    plotspc(data$power, func = sum, plot.args = list(xaxs="i"))
-    title(ylab = "integrated intensity")
+    par(mar=c(4,5,1,1))
+    integrated.data <- colSums(data$power, label.spc = "FFT integrated\n power")
+    
+    plotspc(integrated.data, plot.args = list(xaxs="i"))
   })
 })
