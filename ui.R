@@ -33,7 +33,9 @@ shinyUI(
                                 "femtoseconds (fs)" = 1E-3,
                                 "seconds (s)" = 1E12
                               ) 
-                  )
+                  ),
+                  includeMarkdown("markdown/data-input.md")
+                  
                 )
               ),
               column(7,
@@ -62,7 +64,7 @@ shinyUI(
                                       "phase" = "phase"
                                     )
                         ),
-                        selectInput("fft.filter", label = "filter", selected = "none",
+                        selectInput("fft.filter", label = "filter", selected = "boxcar",
                                     choices = list(
                                       "none" = "boxcar",
                                       "Bartlett" = "bartlett",
@@ -73,7 +75,9 @@ shinyUI(
                                       "Triangular" = "triang"
                                     )
                         ),
-                        plotOutput("fft.filter.plot", height = "200px")
+                        plotOutput("fft.filter.plot", height = "200px"),
+                        br(),
+                        includeMarkdown("markdown/fft.md")
                       )
                   ),
                   column(7,
@@ -99,7 +103,9 @@ shinyUI(
                 sliderInput("noctaves", label = "octaves", 1, 10, value = 4),
                 sliderInput("nvoices", label = "voices", 1, 16, value = 8),
                 sliderInput("w0", label = "central frequency (ratio of 2\U03C0)", 
-                            0.5, 2.0, value = 1.0, step = 0.1)
+                            0.5, 2.0, value = 1.0, step = 0.1),
+                includeMarkdown("markdown/wavelets.md")
+                
               )
             ),
             column(9,

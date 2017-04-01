@@ -115,7 +115,7 @@ shinyServer(function(input, output, session) {
       l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
       lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
-            col = '#e95420', lwd = 8)
+            col = '#e95420', lwd = 5)
     }
   })
   
