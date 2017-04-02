@@ -1,1 +1,1 @@
-To visualize a dataset, upload a file or choose an example dataset. 
+To visualize a dataset, upload a file or choose an example dataset. The data is trimmed, scaled, and displayed with a contour plot. The plots on the side show the data's marginal intensities. Highlight a region on the plot to see its marginal intensity. See the About tab for a detailed description of the file input format.

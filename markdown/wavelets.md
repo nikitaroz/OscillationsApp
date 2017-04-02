@@ -1,1 +1,1 @@
-test
+A wavelet transform is a method for understanding how frequencies are localized in time. You can choose parameters and highlight areas of the FFT power spectrum plot to see a region's aggregate wavelet transform.

@@ -1,2 +1,1 @@
-test
-
+This tab displays the Fast Fourier Transform (FFT) of the dataset along the time axis. The format follows the same pattern as the Data Input tab. You can choose from a selection of filters to apply to the data, as well as which component of the FFT to display.
