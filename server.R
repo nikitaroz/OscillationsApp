@@ -21,9 +21,10 @@ shinyServer(function(input, output, session) {
     
     if(input$x.axis == "wavenumber"){
       data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
+    } else {
     }
     
-    data <- scaleData(trimData(data), nx = 400)
+    data <- scaleData(trimData(data, uniform = FALSE, end.time = 2.0), nx = 600)
     # picoseconds are default times
     data@data$x <- data@data$x * as.numeric(input$time)
     return(data)
@@ -79,7 +80,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     zmax = max(abs(data))
-    par(mar=c(4.5,5,1,7.5))
+    par(mar=c(4.5,5,1.5,7.5))
     
     plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax))
@@ -103,7 +104,7 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(4.5,1.5,1,1.5))
+    par(mar=c(4.5,1.5,1.5,1.5))
     
     
     plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
@@ -116,6 +117,14 @@ shinyServer(function(input, output, session) {
       trimmed.data <- data[[l = l, wl.index = TRUE]]
       lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
             col = '#e95420', lwd = 5)
+      if(input$x.axis == "wavenumber") {
+        label <- bquote(.(as.integer(input$raw.brush$xmin))~ - ~ 
+                          .(as.integer(input$raw.brush$xmax)) ~ cm^{-1})
+      } else {
+        label <- bquote(.(as.integer(input$raw.brush$xmin))~ - ~ 
+                          .(as.integer(input$raw.brush$xmax)) ~ nm)
+      }
+      mtext(label, col = '#e95420', font = 2, cex = 1.2)
     }
   })
   
@@ -136,7 +145,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
 
-    par(mar=c(4.5,5,1,7.5))
+    par(mar=c(4.5,5,1.5,7.5))
     plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, palette))
     plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
   
@@ -181,7 +190,7 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
-    par(mar=c(4.5,1.5,1,1.5))
+    par(mar=c(4.5,1.5,1.5,1.5))
 
     plot(x = rowSums(data[[]]), y = data@data$x, xlim = xlim, yaxs = "i", 
          type = "l", xlab = "Integrated intensity", ylab = "", yaxt = "n")
@@ -193,6 +202,15 @@ shinyServer(function(input, output, session) {
       trimmed.data <- data[[l = l, wl.index = TRUE]]
       lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
             col = '#e95420', lwd = 5)
+      
+      if(input$x.axis == "wavenumber") {
+        label <- bquote(.(as.integer(input$fft.brush$xmin))~ - ~ 
+                          .(as.integer(input$fft.brush$xmax)) ~ cm^{-1})
+      } else {
+        label <- bquote(.(as.integer(input$fft.brush$xmin))~ - ~ 
+                          .(as.integer(input$fft.brush$xmax)) ~ nm)
+      }
+      mtext(label, col = '#e95420', font = 2, cex = 1.2)
     }
   })
   
@@ -213,11 +231,32 @@ shinyServer(function(input, output, session) {
     }
     if(!is.null(input$wavelet.brush)) {
       data <- data[l = input$wavelet.brush$xmin:input$wavelet.brush$xmax]
+      lims <- c(as.integer(input$wavelet.brush$xmin), as.integer(input$wavelet.brush$xmax))
+    } else {
+      lims <- c(as.integer(min(data@wavelength)), as.integer(max(data@wavelength)))
+
     }
+    if(input$x.axis == "wavenumber") {
+      label <- bquote(.(lims[1]) ~ - ~ 
+                        .(lims[2]) ~ cm^{-1})
+    } else {
+      label <- bquote(.(lims[1]) ~ - ~ 
+                        .(lims[2]) ~ nm)
+    }
+
     par(mar=c(4,5,1,6))
     
+    pnl <- function(..., label) {
+      panel.levelplot(...)
+      grid.text(label, unit(0.99, "npc"), unit(0.99, "npc"), 
+                gp=gpar(fontsize = 24, fontface = "bold"),
+                just = c("right", "top"))
+    }
     plotmap(data, aspect = "fill", contour = TRUE, 
-            col.regions = brewer.pal(9, "YlOrRd"), cuts = 8)
+            col.regions = brewer.pal(9, "YlOrRd"), cuts = 8, label = label, 
+            panel = pnl)
+    
+
   })
   
   output$wavelet.selector <- renderPlot({
