@@ -9,9 +9,12 @@ shinyUI(
               column(3, 
                 wellPanel(
                   fileInput(
-                    'file', NULL, accept=c('text/csv', 
-                                           'text/comma-separated-values,text/plain', 
-                                           '.csv')
+                    'file', NULL, 
+                    accept = c(
+                      'text/csv', 
+                       'text/comma-separated-values,text/plain', 
+                       '.csv'
+                    )
                   ),
                   selectInput(
                     "example", label = "example datasets", selected = "none",
@@ -21,7 +24,8 @@ shinyUI(
                       "simulated" = "simulated"
                     )
                   ),
-                  selectInput("x.axis", label = "label", selected = "wavenumber",
+                  selectInput("x.axis", label = "label", 
+                              selected = "wavenumber",
                               choices = list(
                                 "wavenumber" = "wavenumber",
                                 "wavelength" = "wavelength"
@@ -64,7 +68,8 @@ shinyUI(
                                       "phase" = "phase"
                                     )
                         ),
-                        selectInput("fft.filter", label = "filter", selected = "boxcar",
+                        selectInput("fft.filter", label = "filter", 
+                                    selected = "boxcar",
                                     choices = list(
                                       "none" = "boxcar",
                                       "Bartlett" = "bartlett",
@@ -102,7 +107,8 @@ shinyUI(
               wellPanel(
                 sliderInput("noctaves", label = "octaves", 1, 10, value = 4),
                 sliderInput("nvoices", label = "voices", 1, 16, value = 8),
-                sliderInput("w0", label = "central frequency (ratio of 2\U03C0)", 
+                sliderInput("w0", 
+                            label = "central frequency (ratio of 2\U03C0)", 
                             0.5, 2.0, value = 1.0, step = 0.1),
                 includeMarkdown("markdown/wavelets.md")
                 

@@ -23,7 +23,7 @@ shinyServer(function(input, output, session) {
       data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
     } else {
     }
-    
+    # TODO: fix this
     data <- scaleData(trimData(data, uniform = FALSE, end.time = 2.0), nx = 600)
     # picoseconds are default times
     data@data$x <- data@data$x * as.numeric(input$time)
@@ -79,11 +79,13 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    zmax = max(abs(data))
-    par(mar=c(4.5,5,1.5,7.5))
+    zmax <- max(abs(data))
+    par(mar = c(4.5, 5, 1.5, 7.5))
     
-    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), zlim=c(-zmax, zmax))
-    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, zlim=c(-zmax, zmax))
+    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), 
+            zlim=c(-zmax, zmax))
+    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, 
+            zlim=c(-zmax, zmax))
     nxticks <<- length(axTicks(1))
   })  
     
@@ -95,8 +97,8 @@ shinyServer(function(input, output, session) {
     par(mar=c(1.5,5,1,7.5))
     integrated.data <- colSums(data, label.spc = "integrated intensity")
     plotspc(integrated.data, func = sum, plot.args = list(xaxs="i"), 
-            title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
-            bty="o", nxticks = nxticks)
+            title.args = list(xlab = ""), 
+            axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
   })
   
   output$raw.y <- renderPlot({
@@ -104,7 +106,7 @@ shinyServer(function(input, output, session) {
     if(is.null(data)) {
       return(NULL)
     }
-    par(mar=c(4.5,1.5,1.5,1.5))
+    par(mar = c(4.5, 1.5, 1.5, 1.5))
     
     
     plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
@@ -167,8 +169,8 @@ shinyServer(function(input, output, session) {
     par(mar=c(1.5,5,1,7.5))
     integrated.data <- colSums(data, label.spc = "integrated intensity")
     plotspc(integrated.data, plot.args = list(xaxs="i"),
-            title.args = list(xlab = ""), axis.args = list(x = list(labels = FALSE)), 
-            nxticks = nxticks)
+            title.args = list(xlab = ""), 
+            axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
   })
   
   output$fft.y <- renderPlot({
@@ -231,9 +233,11 @@ shinyServer(function(input, output, session) {
     }
     if(!is.null(input$wavelet.brush)) {
       data <- data[l = input$wavelet.brush$xmin:input$wavelet.brush$xmax]
-      lims <- c(as.integer(input$wavelet.brush$xmin), as.integer(input$wavelet.brush$xmax))
+      lims <- c(as.integer(input$wavelet.brush$xmin), 
+                as.integer(input$wavelet.brush$xmax))
     } else {
-      lims <- c(as.integer(min(data@wavelength)), as.integer(max(data@wavelength)))
+      lims <- c(as.integer(min(data@wavelength)), 
+                as.integer(max(data@wavelength)))
 
     }
     if(input$x.axis == "wavenumber") {
@@ -243,8 +247,8 @@ shinyServer(function(input, output, session) {
       label <- bquote(.(lims[1]) ~ - ~ 
                         .(lims[2]) ~ nm)
     }
-
-    par(mar=c(4,5,1,6))
+    
+    par(mar = c(4, 5, 1, 6))
     
     pnl <- function(..., label) {
       panel.levelplot(...)
