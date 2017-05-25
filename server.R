@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     } else {
     }
     # TODO: fix this
-    data <- scaleData(trimData(data, uniform = FALSE, end.time = 2.0), nx = 600)
+    data <- scaleData(trimData(data, uniform = TRUE), nx = 600)
     # picoseconds are default times
     data@data$x <- data@data$x * as.numeric(input$time)
     return(data)
