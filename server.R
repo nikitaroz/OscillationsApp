@@ -232,7 +232,9 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     if(!is.null(input$wavelet.brush)) {
-      data <- data[l = input$wavelet.brush$xmin:input$wavelet.brush$xmax]
+      l = wl2i(data, input$wavelet.brush$xmin):wl2i(data, input$wavelet.brush$xmax)
+      
+      data <- data[l = l, wl.index = TRUE]
       lims <- c(as.integer(input$wavelet.brush$xmin), 
                 as.integer(input$wavelet.brush$xmax))
     } else {
