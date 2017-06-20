@@ -182,7 +182,7 @@ shinyServer(function(input, output, session) {
             axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
   })
   
-  output$fft.y <- renderPlot({
+    output$fft.y <- renderPlot({
     data <- fft.data()
     if(is.null(data)) {
       return(NULL)
@@ -201,17 +201,37 @@ shinyServer(function(input, output, session) {
       return(NULL)
     }
     
+    if(input$fft.projection == "max"){
+      x.data <- apply(data[[]], 1, max)
+      xlim <- c(0, max(x.data))
+      x.label = "Max Intensity"
+      
+    }else if(input$fft.projection == "integrated"){
+      x.data = rowSums(data[[]])
+      xlim <- c(0, max(x.data))
+      x.label = "Integrated Intensity"
+    } else {
+      return(NULL)
+    }
+    
     par(mar=c(4.5,1.5,1.5,1.5))
 
-    plot(x = rowSums(data[[]]), y = data@data$x, xlim = xlim, yaxs = "i", 
-         type = "l", xlab = "Integrated intensity", ylab = "", yaxt = "n")
+    plot(x = x.data, y = data@data$x, xlim = xlim, yaxs = "i", 
+         type = "l", xlab = x.label, ylab = "", yaxt = "n")
     axis(side = 2, labels = FALSE)
     abline(v = 0, lty = 2)
     
     if(!is.null(input$fft.brush)){
       l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
       trimmed.data <- data[[l = l, wl.index = TRUE]]
-      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
+      if(input$fft.projection == "max"){
+        trimmed.data <- apply(data[[l = l, wl.index = TRUE]], 1, max)
+      }else if(input$fft.projection == "integrated"){
+        trimmed.data =rowSums(trimmed.data)
+      } else {
+        return(NULL)
+      }
+      lines(x = trimmed.data, y = data@data$x, type = "l", 
             col = '#e95420', lwd = 5)
       
       if(input$x.axis == "wavenumber") {
