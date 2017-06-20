@@ -68,6 +68,12 @@ shinyUI(
                                       "phase" = "phase"
                                     )
                         ),
+                        selectInput("fft.projection", label = "projection", 
+                                    selected = "max", choices = list(
+                                      "max" = "max",
+                                      "integrated" = "integrated"
+                                    )
+                        ),
                         selectInput("fft.filter", label = "filter", 
                                     selected = "boxcar",
                                     choices = list(
@@ -119,7 +125,7 @@ shinyUI(
               plotOutput("wavelet.selector", brush = brushOpts(
                 id = "wavelet.brush",
                 direction = c("x") 
-                ), height = "150px"
+              ), height = "150px"
               )
             )
           )
@@ -134,3 +140,4 @@ shinyUI(
     )
   )
 )
+
