@@ -1,8 +1,5 @@
 library(shiny)
 library(signal)
-library(RColorBrewer)
-library(plotrix)
-library(reshape2)
 
 source("globals.R")
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
@@ -221,8 +218,9 @@ shinyServer(function(input, output, session) {
     if (input$proj.style == "max") {
       df <- apply(dat, 1, max)
       df@label$spc = "Max Intensity"
-    } else if (input$proj.style == "integrated") {
-      df = rowSums(dat, label.spc = "Integrated Intensity")
+    } else if (input$proj.style == "int") {
+      df <- rowSums(dat, label.spc = "Integrated Intensity")
+      print(df)
     }
     
     df_l = longDF_rmNA(df)
@@ -379,7 +377,7 @@ shinyServer(function(input, output, session) {
     if (input$proj.style == "max") {
       df <- apply(dat, 1, max)
       df@label$spc = "Max Intensity"
-    } else if (input$proj.style == "integrated") {
+    } else if (input$proj.style == "int") {
       df = rowSums(dat , label.spc = "Integrated Intensity")
     }
     
