@@ -1,6 +1,4 @@
 library(shiny)
-library(signal)
-library(RColorBrewer)
 
 source("globals.R")
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
@@ -221,7 +219,6 @@ shinyServer(function(input, output, session) {
       df@label$wavelength = "Max Intensity"
     } else if (input$proj.style == "int") {
       df <- rowSums(dat, label.wavelength = "Integrated Intensity")
-      print(df)
     }
     
     df_l = longDF_rmNA(df)
