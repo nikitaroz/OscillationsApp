@@ -1,5 +1,6 @@
 library(shiny)
 library(signal)
+library(RColorBrewer)
 
 source("globals.R")
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
@@ -217,9 +218,9 @@ shinyServer(function(input, output, session) {
     
     if (input$proj.style == "max") {
       df <- apply(dat, 1, max)
-      df@label$spc = "Max Intensity"
+      df@label$wavelength = "Max Intensity"
     } else if (input$proj.style == "int") {
-      df <- rowSums(dat, label.spc = "Integrated Intensity")
+      df <- rowSums(dat, label.wavelength = "Integrated Intensity")
       print(df)
     }
     
@@ -233,7 +234,7 @@ shinyServer(function(input, output, session) {
       mode = 'lines'
     ) %>%
       layout(
-        xaxis = list(title = df@label$spc, showticklabels = T),
+        xaxis = list(title = df@label$wavelength , showticklabels = T),
         yaxis = list(title = "", showticklabels = F)
       )
     
@@ -376,9 +377,9 @@ shinyServer(function(input, output, session) {
     
     if (input$proj.style == "max") {
       df <- apply(dat, 1, max)
-      df@label$spc = "Max Intensity"
+      df@label$wavelength  = "Max Intensity"
     } else if (input$proj.style == "int") {
-      df = rowSums(dat , label.spc = "Integrated Intensity")
+      df = rowSums(dat , label.wavelength  = "Integrated Intensity")
     }
     
     df_l = longDF_rmNA(df)
@@ -391,7 +392,7 @@ shinyServer(function(input, output, session) {
       mode = 'lines'
     ) %>%
       layout(
-        xaxis = list(title = df@label$spc, showticklabels = T),
+        xaxis = list(title = df@label$wavelength , showticklabels = T),
         yaxis = list(title = "", showticklabels = F)
       )
     
@@ -680,9 +681,9 @@ shinyServer(function(input, output, session) {
     
     if (input$proj.style == "max") {
       df <- apply(df, 1, max)
-      df@label$spc = "Max Intensity"
+      df@label$wavelength  = "Max Intensity"
     } else if (input$proj.style == "int") {
-      df = rowSums(df, label.spc = "Integrated Intensity")
+      df = rowSums(df, label.wavelength = "Integrated Intensity")
     }
     
     df_l = longDF_rmNA(df)
@@ -694,7 +695,7 @@ shinyServer(function(input, output, session) {
       mode = 'lines'
     ) %>%
       layout(
-        xaxis = list(title = df@label$spc, showticklabels = T),
+        xaxis = list(title = df@label$wavelength, showticklabels = T),
         yaxis = list(title = "", showticklabels = F)
       )
     
