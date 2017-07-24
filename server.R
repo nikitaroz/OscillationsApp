@@ -1063,12 +1063,8 @@ shinyServer(function(input, output, session) {
     plotspc(integrated.data, plot.args = list(xaxs="i"))
   })
 <<<<<<< HEAD
-<<<<<<< HEAD
 })
 >>>>>>> parent of b23c421... Update server.R
-=======
-})
->>>>>>> parent of 205119c... Update server.R
 =======
 })
 >>>>>>> parent of 205119c... Update server.R
