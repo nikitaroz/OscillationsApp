@@ -1,5 +1,4 @@
 library(shiny)
-library(signal)
 
 source("globals.R")
 options(shiny.maxRequestSize = 100 * 1024 ^ 2)
