@@ -681,7 +681,7 @@ shinyServer(function(input, output, session) {
     if (input$proj.style == "max") {
       df <- apply(df, 1, max)
       df@label$spc = "Max Intensity"
-    } else if (input$proj.style == "int") {
+    } else if (input$proj.style == "integrated") {
       df = rowSums(df, label.spc = "Integrated Intensity")
     }
     
