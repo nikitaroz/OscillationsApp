@@ -954,16 +954,7 @@ shinyServer(function(input, output, session) {
     }
     
     par(mar=c(1.5,5,1,7.5))
-    if(input$fft.projection == "max"){
-      integrated.data <- apply(data, 2, max)
-      integrated.data@label$spc = "Max Intensity"
-      
-    }
-    else if(input$fft.projection == "integrated"){
-      integrated.data <- colSums(data, label.spc = "Integrated Intensity")
-    } else {
-      return(NULL)
-    }
+    integrated.data <- colSums(data, label.spc = "integrated intensity")
     plotspc(integrated.data, plot.args = list(xaxs="i"),
             title.args = list(xlab = ""), 
             axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
@@ -1071,5 +1062,9 @@ shinyServer(function(input, output, session) {
     
     plotspc(integrated.data, plot.args = list(xaxs="i"))
   })
+<<<<<<< HEAD
 })
 >>>>>>> parent of b23c421... Update server.R
+=======
+})
+>>>>>>> parent of 205119c... Update server.R
