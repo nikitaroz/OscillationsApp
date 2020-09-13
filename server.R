@@ -2,28 +2,31 @@ library(shiny)
 library(signal)
 library(RColorBrewer)
 library(plotrix)
+library(rmarkdown)
 
-source("globals.R")
-options(shiny.maxRequestSize=100*1024^2)
+source("helpers.R")
+source("plotters.R")
+options(shiny.maxRequestSize = 100 * 1024 ^ 2)
 
 shinyServer(function(input, output, session) {
- 
   processed.data <- reactive({
-  if(!is.null(input$file) && input$example == "none") {
+    if (!is.null(input$file) && input$example == "none") {
       data <- loadData(file = input$file$datapath)
-    } else if(input$example == "experimental"){
+    } else if (input$example == "experimental") {
       data <- loadData(file = "data/experimental.csv")
-    } else if(input$example == "simulated") {
+    } else if (input$example == "simulated") {
       data <- loadData(file = "data/simulated.csv")
     } else {
       return(NULL)
     }
     
-    if(input$x.axis == "wavenumber"){
-      data@label$.wavelength = expression(Wavenumber~(cm^{-1}))
+    if (input$x.axis == "wavenumber") {
+      data@label$.wavelength = expression(Wavenumber ~ (cm ^ {
+        -1
+      }))
     } else {
+      
     }
-    # TODO: fix this
     data <- scaleData(trimData(data, uniform = TRUE), nx = 600)
     # picoseconds are default times
     data@data$x <- data@data$x * as.numeric(input$time)
@@ -32,276 +35,101 @@ shinyServer(function(input, output, session) {
   
   fft.filter <- reactive({
     data <- processed.data()
-    if(is.null(data)) {
+    if (is.null(data)) {
       return(NULL)
     }
     ntime <- length(data@data$x)
     
-    w <- switch(input$fft.filter, 
-                 "boxcar" = boxcar(ntime),
-                 "bartlett" = bartlett(ntime),
-                 "blackman" = blackman(ntime),
-                 "gausswin" = gausswin(ntime),
-                 "hamming" = hamming(ntime),
-                 "hanning" = hanning(ntime),
-                 "triang" = triang(ntime)
+    w <- switch(
+      input$fft.filter,
+      "boxcar" = boxcar(ntime),
+      "bartlett" = bartlett(ntime),
+      "blackman" = blackman(ntime),
+      "gausswin" = gausswin(ntime),
+      "hamming" = hamming(ntime),
+      "hanning" = hanning(ntime),
+      "triang" = triang(ntime)
     )
     return(w)
   })
   
   fft.data <- reactive({
     data <- processed.data()
-    if(is.null(data)) {
+    if (is.null(data)) {
       return(NULL)
     }
     w <- fft.filter()
-    if(!is.null(w)) {
-      data <- apply(data, 2, function(x){x * w})
+    if (!is.null(w)) {
+      data <- apply(data, 2, function(x) {
+        x * w
+      })
     }
     data <- dft(data)
-    output <- list (
-      power = apply(data, 1:2, function(x){Mod(x)^2}),
-      phase = apply(data, 1:2, Arg)
-    )
+    output <- list (power = apply(data, 1:2, function(x) {
+      Mod(x) ^ 2
+    }),
+    phase = apply(data, 1:2, Arg))
     return(output)
   })
   
   wavelet.data <- reactive({
     data <- processed.data()
-    if(is.null(data)) {
+    if (is.null(data)) {
       return(NULL)
     }
-    return(wavelet(data, input$noctaves, input$nvoices, w0 = input$w0 * 2*pi))
+    return(wavelet(data, input$noctaves, input$nvoices, w0 = input$w0 * 2 *
+                     pi))
   })
-
+  
   output$raw <- renderPlot({
-    data <- processed.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    zmax <- max(abs(data))
-    par(mar = c(4.5, 5, 1.5, 7.5))
-    
-    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, "RdBu"), 
-            zlim=c(-zmax, zmax))
-    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE, 
-            zlim=c(-zmax, zmax))
-    nxticks <<- length(axTicks(1))
-  })  
-    
+    plot.raw(processed.data())
+  })
+  
   output$raw.x <- renderPlot({
-    data <- processed.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    par(mar=c(1.5,5,1,7.5))
-    integrated.data <- colSums(data, label.spc = "integrated intensity")
-    plotspc(integrated.data, func = sum, plot.args = list(xaxs="i"), 
-            title.args = list(xlab = ""), 
-            axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
+    plot.raw.x(processed.data())
   })
   
   output$raw.y <- renderPlot({
-    data <- processed.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    par(mar = c(4.5, 1.5, 1.5, 1.5))
-    
-    
-    plot(x = rowSums(data[[]]), y = data@data$x, yaxs = "i", type = "l", 
-         xlab = "Integrated intensity", ylab = "", yaxt = "n")
-    axis(side = 2, labels = FALSE)
-    abline(v = 0, lty = 2)
-    
-    if(!is.null(input$raw.brush)){
-      l = wl2i(data, input$raw.brush$xmin):wl2i(data, input$raw.brush$xmax)
-      trimmed.data <- data[[l = l, wl.index = TRUE]]
-      lines(x = rowSums(trimmed.data), y = data@data$x, type = "l", 
-            col = '#e95420', lwd = 5)
-      if(input$x.axis == "wavenumber") {
-        label <- bquote(.(as.integer(input$raw.brush$xmin))~ - ~ 
-                          .(as.integer(input$raw.brush$xmax)) ~ cm^{-1})
-      } else {
-        label <- bquote(.(as.integer(input$raw.brush$xmin))~ - ~ 
-                          .(as.integer(input$raw.brush$xmax)) ~ nm)
-      }
-      mtext(label, col = '#e95420', font = 2, cex = 1.2)
-    }
+    plot.raw.y(processed.data(), input$raw.brush, input$x.axis)
   })
-  
   
   output$fft <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    
-    if(input$fft.datatype == "power") {
-      data <- data$power
-      palette <- "YlOrRd"
-    } else if(input$fft.datatype == "phase") {
-      data <- data$phase
-      palette <- "RdBu" 
-    } else {
-      return(NULL)
-    }
-
-    par(mar=c(4.5,5,1.5,7.5))
-    plotmat(data, y = "x", contour = FALSE, col = brewer.pal(100, palette))
-    plotmat(data, y = "x", contour = TRUE, col = c("black"), add = TRUE)
-  
+    plot.fft(fft.data(), input$fft.datatype)
   })
   
-  output$fft.x <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    if(input$fft.datatype == "power") {
-      data <- data$power
-    } else if(input$fft.datatype == "phase"){
-      data <- data$phase
-    } else {
-      return(NULL)
-    }
-    
-    par(mar=c(1.5,5,1,7.5))
-    if(input$fft.projection == "max"){
-      integrated.data <- apply(data, 2, max)
-      integrated.data@label$spc = "Max Intensity"
-      
-    }
-    else if(input$fft.projection == "integrated"){
-      integrated.data <- colSums(data, label.spc = "Integrated Intensity")
-    } else {
-      return(NULL)
-    }
-    plotspc(integrated.data, plot.args = list(xaxs="i"),
-            title.args = list(xlab = ""), 
-            axis.args = list(x = list(labels = FALSE)), nxticks = nxticks)
-  })
+  output$fft.x <- renderPlot(plot.fft.x(fft.data(), input$fft.datatype, input$fft.projection))
   
-    output$fft.y <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    
-    if(input$fft.datatype == "power") {
-      data <- data$power
-      x.data <- rowSums(data[[]])
-      xlim <- c(0, max(x.data))
-    } else if(input$fft.datatype == "phase"){
-      data <- data$phase
-      x.data <- rowSums(data[[]])
-      datalim <- max(abs(x.data))
-      xlim <- c(-datalim, datalim)
-    } else {
-      return(NULL)
-    }
-    
-    if(input$fft.projection == "max"){
-      x.data <- apply(data[[]], 1, max)
-      xlim <- c(0, max(x.data))
-      x.label = "Max Intensity"
-      
-    }else if(input$fft.projection == "integrated"){
-      x.data = rowSums(data[[]])
-      xlim <- c(0, max(x.data))
-      x.label = "Integrated Intensity"
-    } else {
-      return(NULL)
-    }
-    
-    par(mar=c(4.5,1.5,1.5,1.5))
-
-    plot(x = x.data, y = data@data$x, xlim = xlim, yaxs = "i", 
-         type = "l", xlab = x.label, ylab = "", yaxt = "n")
-    axis(side = 2, labels = FALSE)
-    abline(v = 0, lty = 2)
-    
-    if(!is.null(input$fft.brush)){
-      l = wl2i(data, input$fft.brush$xmin):wl2i(data, input$fft.brush$xmax)
-      trimmed.data <- data[[l = l, wl.index = TRUE]]
-      if(input$fft.projection == "max"){
-        trimmed.data <- apply(data[[l = l, wl.index = TRUE]], 1, max)
-      }else if(input$fft.projection == "integrated"){
-        trimmed.data =rowSums(trimmed.data)
-      } else {
-        return(NULL)
-      }
-      lines(x = trimmed.data, y = data@data$x, type = "l", 
-            col = '#e95420', lwd = 5)
-      
-      if(input$x.axis == "wavenumber") {
-        label <- bquote(.(as.integer(input$fft.brush$xmin))~ - ~ 
-                          .(as.integer(input$fft.brush$xmax)) ~ cm^{-1})
-      } else {
-        label <- bquote(.(as.integer(input$fft.brush$xmin))~ - ~ 
-                          .(as.integer(input$fft.brush$xmax)) ~ nm)
-      }
-      mtext(label, col = '#e95420', font = 2, cex = 1.2)
-    }
+  output$fft.y <- renderPlot({
+    plot.fft.y(
+      fft.data(),
+      input$fft.datatype,
+      input$fft.projection,
+      input$fft.brush,
+      input$x.axis
+    )
   })
   
   output$fft.filter.plot <- renderPlot({
     w <- fft.filter()
-    if(is.null(w)) {
+    if (is.null(w)) {
       return(NULL)
     }
-    par(mar=c(4, 2, 0.2, 0.2))
-    plot(w, xlab = "Filter", ylab = "", type = "l", ylim = c(0, 1.05))
+    par(mar = c(4, 2, 0.2, 0.2))
+    plot(
+      w,
+      xlab = "Filter",
+      ylab = "",
+      type = "l",
+      ylim = c(0, 1.05)
+    )
   })
   
-  
   output$wavelet <- renderPlot({
-    data <- wavelet.data()
-    if(is.null(wavelet.data())) {
-      return(NULL)
-    }
-    if(!is.null(input$wavelet.brush)) {
-      l = wl2i(data, input$wavelet.brush$xmin):wl2i(data, input$wavelet.brush$xmax)
-      
-      data <- data[l = l, wl.index = TRUE]
-      lims <- c(as.integer(input$wavelet.brush$xmin), 
-                as.integer(input$wavelet.brush$xmax))
-    } else {
-      lims <- c(as.integer(min(data@wavelength)), 
-                as.integer(max(data@wavelength)))
-
-    }
-    if(input$x.axis == "wavenumber") {
-      label <- bquote(.(lims[1]) ~ - ~ 
-                        .(lims[2]) ~ cm^{-1})
-    } else {
-      label <- bquote(.(lims[1]) ~ - ~ 
-                        .(lims[2]) ~ nm)
-    }
-    
-    par(mar = c(4, 5, 1, 6))
-    
-    pnl <- function(..., label) {
-      panel.levelplot(...)
-      grid.text(label, unit(0.99, "npc"), unit(0.99, "npc"), 
-                gp=gpar(fontsize = 24, fontface = "bold"),
-                just = c("right", "top"))
-    }
-    plotmap(data, aspect = "fill", contour = TRUE, 
-            col.regions = brewer.pal(9, "YlOrRd"), cuts = 8, label = label, 
-            panel = pnl)
-    
-
+    plot.wavelet(wavelet.data(), input$wavelet.brush, input$x.axis)
   })
   
   output$wavelet.selector <- renderPlot({
-    data <- fft.data()
-    if(is.null(data)) {
-      return(NULL)
-    }
-    par(mar=c(4,5,1,1))
-    integrated.data <- colSums(data$power, label.spc = "FFT integrated\n power")
-    
-    plotspc(integrated.data, plot.args = list(xaxs="i"))
+    plot.wavelet.selector(fft.data())
   })
+  
 })

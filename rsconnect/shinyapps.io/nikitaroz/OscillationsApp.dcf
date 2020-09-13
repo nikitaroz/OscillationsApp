@@ -1,0 +1,12 @@
+name: OscillationsApp
+title: OscillationsApp
+username:
+account: nikitaroz
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2779156
+bundleId: 3624845
+url: https://nikitaroz.shinyapps.io/OscillationsApp/
+when: 1600021445.71574
+asMultiple: FALSE
+asStatic: FALSE
