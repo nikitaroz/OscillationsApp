@@ -47,8 +47,8 @@ shinyUI(
                    
                  )
                ),
-               column(
-                 7,
+               div(
+                 class="col-sm-7 col-xl-8",
                  plotOutput("raw",
                             brush = brushOpts(
                               id = "raw.brush",
@@ -56,7 +56,7 @@ shinyUI(
                             )),
                  plotOutput("raw.x", height = "150px")
                ),
-               column(2,
+               div(class="col-sm-2 col-xl-1 hidden-xs", 
                       plotOutput("raw.y"))
              ))),
     tabPanel("FFT",
@@ -97,8 +97,8 @@ shinyUI(
                    includeMarkdown("markdown/fft.md")
                  )
                ),
-               column(
-                 7,
+               div(
+                 class="col-sm-7 col-xl-8",
                  plotOutput("fft",
                             brush = brushOpts(
                               id = "fft.brush",
@@ -106,8 +106,8 @@ shinyUI(
                             )),
                  plotOutput("fft.x", height = "150px")
                ),
-               column(2,
-                      plotOutput("fft.y"))
+               div(class="col-sm-2 col-xl-1 hidden-xs", 
+                   plotOutput("fft.y"))
              ))),
     tabPanel("Wavelets",
              fluidPage(fluidRow(
