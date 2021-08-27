@@ -2,6 +2,8 @@ library(hyperSpec)
 library(fields)
 library(Rwave)
 library(plyr)
+library(RColorBrewer)
+library(plotrix)
 
 plot.raw <- function(data) {
   if (is.null(data)) {
@@ -25,7 +27,7 @@ plot.raw <- function(data) {
     zlim = c(-zmax, zmax),
     drawlabels = FALSE
   )
-  #  par(cex=1.0)
+  # par(cex=1.0)
   nxticks <<- length(axTicks(1))
 }
 

@@ -1,7 +1,5 @@
 library(shiny)
 library(signal)
-library(RColorBrewer)
-library(plotrix)
 library(rmarkdown)
 
 source("helpers.R")
